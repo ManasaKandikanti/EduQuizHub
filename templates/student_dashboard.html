@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h2 class="mb-4">Welcome to EduQuizHub</h2>
+
+    <a href="{{ url_for('student_modules') }}"
+       class="btn btn-primary btn-lg px-5">
+        Start Learning
+    </a>
+
+    <div class="mt-4">
+        <a href="{{ url_for('student_results') }}" class="btn btn-outline-info">
+            My Results
+        </a>
+    </div>
+</div>
+{% endblock %}

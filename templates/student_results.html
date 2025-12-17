@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}My Results{% endblock %}
+
+{% block content %}
+<h3>My Quiz Results</h3>
+
+<table class="table table-striped">
+    <tr>
+        <th>Module</th>
+        <th>Quiz</th>
+        <th>Score</th>
+    </tr>
+
+    {% for r in results %}
+    <tr>
+        <td>{{ r.module_name }}</td>
+        <td>{{ r.title }}</td>
+        <td>{{ r.score }} / {{ r.total_questions }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

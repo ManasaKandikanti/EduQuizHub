@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Add Questions{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm p-4">
+            <h3 class="text-center mb-4">Add Questions for Quiz {{ quiz_id }}</h3>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Question</label>
+                    <input type="text" name="question" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Option 1</label>
+                    <input type="text" name="option1" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Option 2</label>
+                    <input type="text" name="option2" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Option 3</label>
+                    <input type="text" name="option3" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Option 4</label>
+                    <input type="text" name="option4" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Correct Option (1-4)</label>
+                    <input type="number" name="correct_option" class="form-control" min="1" max="4" required>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Add Question</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

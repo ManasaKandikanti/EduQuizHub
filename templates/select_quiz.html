@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3 class="mb-4">Select Quiz</h3>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Quiz Title</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for quiz in quizzes %}
+        <tr>
+            <td>{{ quiz.title }}</td>
+            <td>
+
+                {% if action == "add_questions" %}
+                    <a href="{{ url_for('add_questions', quiz_id=quiz.id) }}"
+                       class="btn btn-primary btn-sm">
+                       Add Questions
+                    </a>
+
+                {% elif action == "publish_quiz" %}
+                    <a href="{{ url_for('publish_quiz', quiz_id=quiz.id) }}"
+                       class="btn btn-success btn-sm">
+                       Publish Quiz
+                    </a>
+
+                {% elif action == "view_results" %}
+                <a href="{{ url_for('view_results', quiz_id=quiz.id) }}"
+   class="btn btn-info">
+   View Results
+</a>               
+                {% endif %}
+
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

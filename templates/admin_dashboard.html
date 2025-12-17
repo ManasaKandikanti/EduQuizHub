@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="text-center mb-5">Admin Control Panel</h2>
+
+    <div class="row g-4 justify-content-center">
+
+        <!-- Manage Modules -->
+        <div class="col-md-4">
+            <div class="card shadow text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">1. Manage Modules</h5>
+                    <p class="card-text">
+                        Create and view academic modules.
+                    </p>
+                    <a href="{{ url_for('manage_modules') }}"
+                       class="btn btn-primary">
+                        Go to Modules
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Quizzes -->
+        <div class="col-md-4">
+            <div class="card shadow text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">2. Manage Quizzes</h5>
+                    <p class="card-text">
+                        Add quizzes under selected modules.
+                    </p>
+                    <a href="{{ url_for('select_module_for_quiz') }}" class="btn btn-success">
+                        Go to Quizzes
+                    </a>                    
+                </div>
+            </div>
+        </div>
+
+        <!-- Monitor Results -->
+        <div class="col-md-4">
+            <div class="card shadow text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">3. Monitor Results</h5>
+                    <p class="card-text">
+                        View student attempts and performance.
+                    </p>
+                    <a href="{{ url_for('select_quiz_for_results') }}" class="btn btn-primary">
+                        View Results
+                    </a>                                        
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

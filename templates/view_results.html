@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Student Results{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h3 class="text-center mb-4">Results for Quiz {{ quiz_id }}</h3>
+        <table class="table table-bordered table-striped">
+            <thead class="table-primary">
+                <tr>
+                    <th>Student Name</th>
+                    <th>Score</th>
+                    <th>Total Questions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                <tr>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.score }}</td>
+                    <td>{{ row.total_questions }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

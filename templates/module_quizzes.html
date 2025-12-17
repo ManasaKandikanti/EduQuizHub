@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Quizzes{% endblock %}
+
+{% block content %}
+<h3>Available Quizzes</h3>
+
+{% if quizzes %}
+<table class="table table-bordered">
+    <tr>
+        <th>Quiz Title</th>
+        <th>Action</th>
+    </tr>
+    {% for quiz in quizzes %}
+    <tr>
+        <td>{{ quiz.title }}</td>
+        <td>
+            <a href="{{ url_for('attempt_quiz', quiz_id=quiz.id) }}"
+               class="btn btn-success">
+                Attempt
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p class="text-muted">No active quizzes in this module.</p>
+{% endif %}
+{% endblock %}

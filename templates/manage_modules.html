@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Manage Modules{% endblock %}
+
+{% block content %}
+<h3>Modules</h3>
+
+<a href="{{ url_for('add_module') }}" class="btn btn-primary mb-3">
+    + Add Module
+</a>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Module Name</th>
+        <th>Actions</th>
+    </tr>
+    {% for m in modules %}
+    <tr>
+        <td>{{ m.name }}</td>
+        <td>
+            <a href="{{ url_for('module_quizzes_admin', module_id=m.id) }}"
+               class="btn btn-sm btn-success">
+                Manage Quizzes
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

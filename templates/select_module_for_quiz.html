@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Select Module{% endblock %}
+
+{% block content %}
+<h3>Select a Module to Manage Quizzes</h3>
+
+<div class="list-group mt-3">
+    {% for module in modules %}
+    <a href="{{ url_for('module_quizzes_admin', module_id=module.id) }}"
+       class="list-group-item list-group-item-action">
+        {{ module.name }}
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

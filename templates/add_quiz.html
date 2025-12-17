@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Add Quiz{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm p-4">
+            <h3 class="text-center mb-4">Add Quiz</h3>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Select Module</label>
+                    <select name="module_id" class="form-control" required>
+                        {% for module in modules %}
+                            <option value="{{ module.id }}">{{ module.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Quiz Title</label>
+                    <input type="text" name="title" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Time Limit (minutes)</label>
+                    <input type="number" name="time_limit" class="form-control" required>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Save Quiz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

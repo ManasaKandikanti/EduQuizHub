@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Modules{% endblock %}
+
+{% block content %}
+<h3>Select a Module</h3>
+
+<div class="row">
+    {% for module in modules %}
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5>{{ module.name }}</h5>
+                <a href="{{ url_for('module_quizzes', module_id=module.id) }}"
+                   class="btn btn-primary mt-2">
+                    View Quizzes
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
