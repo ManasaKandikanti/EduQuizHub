@@ -2,6 +2,87 @@
 {% block title %}Select Module{% endblock %}
 
 {% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        min-height: 100vh;
+        color: #333;
+    }
+
+    h3 {
+        font-weight: 800;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 30px;
+        animation: fadeDown 0.8s ease;
+    }
+
+    .list-group {
+        max-width: 600px;
+        margin: auto;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        animation: fadeUp 0.8s ease;
+    }
+
+    .list-group-item {
+        background: #f8f9fa;
+        color: #333;
+        font-weight: 600;
+        font-size: 16px;
+        padding: 18px 20px;
+        border: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .list-group-item:hover {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 12px 25px rgba(102,126,234,0.45);
+    }
+
+    .btn-back {
+        display: inline-block;
+        background: linear-gradient(135deg, #6c63ff, #4e54c8);
+        color: #fff;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 30px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-decoration: none;
+        transition: all 0.35s ease;
+    }
+
+    .btn-back:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 12px 25px rgba(78,84,200,0.45);
+        background: linear-gradient(135deg, #4e54c8, #6c63ff);
+        color: #fff;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="text-center">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn-back">⬅ Back to Dashboard</a>
+</div>
+
 <h3>Select a Module to Manage Quizzes</h3>
 
 <div class="list-group mt-3">

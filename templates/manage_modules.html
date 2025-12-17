@@ -2,27 +2,147 @@
 {% block title %}Manage Modules{% endblock %}
 
 {% block content %}
-<h3>Modules</h3>
+<style>
+    /* Page background */
+    body {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        min-height: 100vh;
+    }
 
-<a href="{{ url_for('add_module') }}" class="btn btn-primary mb-3">
-    + Add Module
-</a>
+    /* Page header */
+    .page-header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        border-radius: 22px;
+        padding: 28px 32px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        animation: fadeDown 0.8s ease;
+    }
 
-<table class="table table-bordered">
-    <tr>
-        <th>Module Name</th>
-        <th>Actions</th>
-    </tr>
-    {% for m in modules %}
-    <tr>
-        <td>{{ m.name }}</td>
-        <td>
-            <a href="{{ url_for('module_quizzes_admin', module_id=m.id) }}"
-               class="btn btn-sm btn-success">
-                Manage Quizzes
-            </a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+    /* Buttons base animation */
+    .btn-animated {
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.35s ease;
+    }
+
+    /* ADD MODULE BUTTON */
+    .btn-add-module {
+        background: linear-gradient(135deg, #00c6ff, #0072ff);
+        color: #fff;
+        border: none;
+        padding: 12px 30px;
+        font-size: 15px;
+        letter-spacing: 0.6px;
+        box-shadow: 0 12px 25px rgba(0,114,255,0.45);
+    }
+
+    .btn-add-module:hover {
+        background: linear-gradient(135deg, #0072ff, #00c6ff);
+        transform: translateY(-3px) scale(1.08);
+        box-shadow: 0 18px 35px rgba(0,114,255,0.6);
+        color: #fff;
+    }
+
+    /* MANAGE QUIZZES BUTTON */
+    .btn-manage-quiz {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: #fff;
+        border: none;
+        padding: 8px 22px;
+        font-size: 13px;
+        border-radius: 40px;
+        box-shadow: 0 8px 20px rgba(40,167,69,0.4);
+    }
+
+    .btn-manage-quiz:hover {
+        background: linear-gradient(135deg, #20c997, #28a745);
+        transform: scale(1.12);
+        box-shadow: 0 14px 30px rgba(40,167,69,0.6);
+        color: #fff;
+    }
+
+    /* Table Card */
+    .table-card {
+        border-radius: 22px;
+        background: #ffffff;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        animation: fadeUp 0.8s ease;
+    }
+
+    /* Table hover */
+    .table-hover tbody tr {
+        transition: background 0.3s ease, transform 0.3s ease;
+        cursor: pointer;
+    }
+
+    .table-hover tbody tr:hover {
+        background: #eef2ff;
+        transform: scale(1.01);
+    }
+
+    /* Animations */
+    @keyframes fadeDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<!-- Header -->
+<div class="page-header mb-4 d-flex justify-content-between align-items-center">
+    <h3 class="fw-bold mb-0 text-white">📚 Manage Modules</h3>
+
+    <a href="{{ url_for('admin_dashboard') }}"
+       class="btn btn-light btn-animated">
+        ⬅ Dashboard
+    </a>
+</div>
+
+<!-- Add Module Button -->
+<div class="mb-4">
+    <a href="{{ url_for('add_module') }}"
+       class="btn btn-add-module btn-animated">
+        ➕ Add Module
+    </a>
+</div>
+
+<!-- Modules Table -->
+<div class="card table-card">
+    <div class="card-body p-0">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Module Name</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in modules %}
+                <tr>
+                    <td class="fw-semibold ps-4">{{ m.name }}</td>
+                    <td class="text-center">
+                        <a href="{{ url_for('module_quizzes_admin', module_id=m.id) }}"
+                           class="btn btn-manage-quiz btn-animated">
+                            📝 Manage Quizzes
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="2" class="text-center text-muted py-4">
+                        No modules found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

@@ -1,32 +1,153 @@
 {% extends "base.html" %}
 {% block title %}Add Quiz{% endblock %}
 {% block content %}
+
+<style>
+    /* Background */
+    body {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        min-height: 100vh;
+    }
+
+    /* Card */
+    .card {
+        border-radius: 22px;
+        background: #ffffff;
+        box-shadow: 0 25px 45px rgba(0,0,0,0.2);
+        animation: fadeUp 0.8s ease;
+        padding: 30px;
+    }
+
+    /* Header */
+    h3 {
+        font-weight: 800;
+        color: #4e54c8;
+    }
+
+    /* Form Labels */
+    .form-label {
+        font-weight: 600;
+        color: #333;
+    }
+
+    /* Inputs */
+    .form-control {
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102,126,234,0.25);
+        background: #fff;
+    }
+
+    /* Read-only Module Field */
+    .form-control[readonly] {
+        background-color: #e9ecef;
+        cursor: not-allowed;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    /* Buttons Base */
+    .btn {
+        border-radius: 30px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        padding: 12px 18px;
+        font-size: 14px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        transition: all 0.35s ease;
+        cursor: pointer;
+    }
+
+    /* Save Button */
+    .btn-save {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        border: none;
+        box-shadow: 0 14px 30px rgba(102,126,234,0.45);
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px) scale(1.08);
+        box-shadow: 0 20px 40px rgba(102,126,234,0.6);
+        background: linear-gradient(135deg, #764ba2, #667eea);
+        color: #fff;
+    }
+
+    /* Back Button */
+    .btn-back {
+        background: linear-gradient(135deg, #6c63ff, #4e54c8);
+        color: #fff;
+        border: none;
+        box-shadow: 0 10px 25px rgba(78,84,200,0.45);
+    }
+
+    .btn-back:hover {
+        transform: translateY(-2px) scale(1.08);
+        box-shadow: 0 18px 35px rgba(78,84,200,0.6);
+        background: linear-gradient(135deg, #4e54c8, #6c63ff);
+        color: #fff;
+    }
+
+    /* Button Row */
+    .button-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    /* Animation */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card shadow-sm p-4">
+        <div class="card shadow-sm">
             <h3 class="text-center mb-4">Add Quiz</h3>
             <form method="POST">
+
+                <!-- Module Field -->
                 <div class="mb-3">
-                    <label class="form-label">Select Module</label>
-                    <select name="module_id" class="form-control" required>
-                        {% for module in modules %}
-                            <option value="{{ module.id }}">{{ module.name }}</option>
-                        {% endfor %}
-                    </select>
+                    <label class="form-label">Module</label>
+                    <input type="text"
+                           class="form-control"
+                           value="{{ module.name }}"
+                           readonly>
+                    <input type="hidden"
+                           name="module_id"
+                           value="{{ module.id }}">
                 </div>
+
+                <!-- Quiz Title -->
                 <div class="mb-3">
                     <label class="form-label">Quiz Title</label>
-                    <input type="text" name="title" class="form-control" required>
+                    <input type="text" name="title" class="form-control" placeholder="Enter quiz title" required>
                 </div>
+
+                <!-- Time Limit -->
                 <div class="mb-3">
                     <label class="form-label">Time Limit (minutes)</label>
-                    <input type="number" name="time_limit" class="form-control" required>
+                    <input type="number" name="time_limit" class="form-control" placeholder="Eg: 10" required>
                 </div>
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Save Quiz</button>
-                </div>
+
+               <!-- Buttons Row -->
+<div class="d-flex justify-content-between mt-3">
+    <button type="submit" class="btn btn-save flex-fill me-2">💾 Save Quiz</button>
+    <a href="{{ url_for('module_quizzes_admin', module_id=module.id) }}" 
+       class="btn btn-back flex-fill ms-2 text-center">⬅ Back</a>
+</div>
             </form>
         </div>
     </div>
 </div>
+
 {% endblock %}

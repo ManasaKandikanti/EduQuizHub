@@ -1,11 +1,118 @@
 {% extends "base.html" %}
 {% block title %}Add Questions{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-sm p-4">
-            <h3 class="text-center mb-4">Add Questions for Quiz {{ quiz_id }}</h3>
-            <form method="POST">
+
+<style>
+    /* Background */
+    body {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        min-height: 100vh;
+    }
+
+    /* Card styling */
+    .card {
+        border-radius: 22px;
+        background: #ffffff;
+        box-shadow: 0 25px 45px rgba(0,0,0,0.2);
+        animation: fadeUp 0.8s ease;
+        padding: 30px;
+        width: 900px;
+        margin: auto;
+    }
+
+    h3 {
+        font-weight: 800;
+        color: #4e54c8;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-control {
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102,126,234,0.25);
+        background: #fff;
+    }
+
+    /* Two-column form */
+    .form-row {
+        display: flex;
+        gap: 20px;
+    }
+
+    .form-column {
+        flex: 1;
+    }
+
+    /* Buttons row */
+    .button-row {
+        display: flex;
+        gap: 20px;
+        margin-top: 15px;
+    }
+
+    /* Buttons base style */
+    .button-row .btn {
+        height: 42px; /* match input height */
+        flex: 1;       /* match input width dynamically */
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 14px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        padding: 0; /* padding handled by height */
+    }
+
+    .btn-add-question {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        border: none;
+    }
+
+    .btn-add-question:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #764ba2, #667eea);
+    }
+
+
+    .btn-back {
+        background: linear-gradient(135deg, #6c63ff, #4e54c8);
+        color: #fff;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn-back:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #4e54c8, #6c63ff);
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="card shadow-sm">
+    <h3 class="text-center mb-4">Add Questions for Quiz {{ quiz_id }}</h3>
+    <form method="POST">
+
+        <!-- Two-column form -->
+        <div class="form-row">
+            <div class="form-column">
                 <div class="mb-3">
                     <label class="form-label">Question</label>
                     <input type="text" name="question" class="form-control" required>
@@ -18,6 +125,8 @@
                     <label class="form-label">Option 2</label>
                     <input type="text" name="option2" class="form-control" required>
                 </div>
+            </div>
+            <div class="form-column">
                 <div class="mb-3">
                     <label class="form-label">Option 3</label>
                     <input type="text" name="option3" class="form-control" required>
@@ -30,11 +139,16 @@
                     <label class="form-label">Correct Option (1-4)</label>
                     <input type="number" name="correct_option" class="form-control" min="1" max="4" required>
                 </div>
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Add Question</button>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
+
+        <!-- Buttons -->
+        <div class="button-row">
+            <button type="submit" class="btn btn-add-question">➕ Add Question</button>
+            <a href="{{ url_for('module_quizzes_admin', module_id=quiz_id) }}" class="btn btn-back">⬅ Back</a>
+        </div>
+
+    </form>
 </div>
+
 {% endblock %}

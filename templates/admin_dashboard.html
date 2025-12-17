@@ -2,56 +2,168 @@
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        min-height: 100vh;
+    }
 
-    <h2 class="text-center mb-5">Admin Control Panel</h2>
+    /* Title */
+    .dashboard-title {
+        color: #fff;
+        font-weight: 800;
+        letter-spacing: 1px;
+        animation: fadeDown 1s ease-in-out;
+    }
+
+    /* Card Styling */
+    .dashboard-card {
+        position: relative;
+        border-radius: 24px;
+        background: #ffffff;
+        cursor: pointer; /* 👈 hand cursor */
+        overflow: hidden;
+        transition: all 0.5s ease;
+        animation: fadeUp 1s ease-in-out;
+    }
+
+    /* Glow border */
+    .dashboard-card::before {
+        content: "";
+        position: absolute;
+        inset: -3px;
+        border-radius: 26px;
+        background: linear-gradient(
+            120deg,
+            #667eea,
+            #00c6ff,
+            #764ba2
+        );
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    /* Hover Effect */
+    .dashboard-card:hover {
+        transform: translateY(-15px) scale(1.06);
+        box-shadow: 0 35px 70px rgba(0, 0, 0, 0.35);
+    }
+
+    .dashboard-card:hover::before {
+        opacity: 1;
+    }
+
+    /* Icons */
+    .card-icon {
+        font-size: 3.5rem;
+        margin-bottom: 15px;
+        transition: transform 0.4s ease;
+    }
+
+    .dashboard-card:hover .card-icon {
+        transform: scale(1.3) rotate(6deg);
+    }
+
+    /* Buttons */
+    .btn-custom {
+        border-radius: 30px;
+        padding: 12px 28px;
+        font-weight: 600;
+        transition: all 0.35s ease;
+    }
+
+    .dashboard-card:hover .btn-custom {
+        transform: scale(1.12);
+        letter-spacing: 0.6px;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(35px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeDown {
+        from {
+            opacity: 0;
+            transform: translateY(-35px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-5 dashboard-title">
+        🎯 Admin Control Panel
+    </h2>
 
     <div class="row g-4 justify-content-center">
 
         <!-- Manage Modules -->
         <div class="col-md-4">
-            <div class="card shadow text-center h-100">
-                <div class="card-body">
-                    <h5 class="card-title">1. Manage Modules</h5>
-                    <p class="card-text">
-                        Create and view academic modules.
-                    </p>
-                    <a href="{{ url_for('manage_modules') }}"
-                       class="btn btn-primary">
-                        Go to Modules
-                    </a>
+            <a href="{{ url_for('manage_modules') }}"
+               class="text-decoration-none text-dark">
+                <div class="card dashboard-card text-center h-100 p-4">
+                    <div class="card-body">
+                        <div class="card-icon text-primary">📚</div>
+                        <h5 class="fw-bold">Manage Modules</h5>
+                        <p class="text-muted">
+                            Create, edit and organize academic modules.
+                        </p>
+                        <span class="btn btn-primary btn-custom">
+                            Go to Modules
+                        </span>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- Manage Quizzes -->
         <div class="col-md-4">
-            <div class="card shadow text-center h-100">
-                <div class="card-body">
-                    <h5 class="card-title">2. Manage Quizzes</h5>
-                    <p class="card-text">
-                        Add quizzes under selected modules.
-                    </p>
-                    <a href="{{ url_for('select_module_for_quiz') }}" class="btn btn-success">
-                        Go to Quizzes
-                    </a>                    
+            <a href="{{ url_for('select_module_for_quiz') }}"
+               class="text-decoration-none text-dark">
+                <div class="card dashboard-card text-center h-100 p-4">
+                    <div class="card-body">
+                        <div class="card-icon text-success">📝</div>
+                        <h5 class="fw-bold">Manage Quizzes</h5>
+                        <p class="text-muted">
+                            Create quizzes and assign them to modules.
+                        </p>
+                        <span class="btn btn-success btn-custom">
+                            Go to Quizzes
+                        </span>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- Monitor Results -->
         <div class="col-md-4">
-            <div class="card shadow text-center h-100">
-                <div class="card-body">
-                    <h5 class="card-title">3. Monitor Results</h5>
-                    <p class="card-text">
-                        View student attempts and performance.
-                    </p>
-                    <a href="{{ url_for('select_quiz_for_results') }}" class="btn btn-primary">
-                        View Results
-                    </a>                                        
+            <a href="{{ url_for('select_quiz_for_results') }}"
+               class="text-decoration-none text-dark">
+                <div class="card dashboard-card text-center h-100 p-4">
+                    <div class="card-body">
+                        <div class="card-icon text-warning">📊</div>
+                        <h5 class="fw-bold">Monitor Results</h5>
+                        <p class="text-muted">
+                            View student attempts and performance analytics.
+                        </p>
+                        <span class="btn btn-warning btn-custom text-white">
+                            View Results
+                        </span>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
     </div>

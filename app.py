@@ -169,22 +169,35 @@ def add_quiz():
         flash("Unauthorized access", "danger")
         return redirect(url_for("login"))
 
+    module_id = request.args.get("module_id")
+
     conn = get_db_connection()
-    modules = conn.execute("SELECT * FROM modules").fetchall()
+    module = None
+
+    if module_id:
+        module = conn.execute(
+            "SELECT * FROM modules WHERE id = ?",
+            (module_id,)
+        ).fetchone()
 
     if request.method == "POST":
         module_id = request.form["module_id"]
         title = request.form["title"]
         time_limit = request.form["time_limit"]
-        conn.execute("INSERT INTO quizzes (module_id, title, time_limit) VALUES (?, ?, ?)",
-                     (module_id, title, time_limit))
+
+        conn.execute(
+            "INSERT INTO quizzes (module_id, title, time_limit) VALUES (?, ?, ?)",
+            (module_id, title, time_limit)
+        )
         conn.commit()
         conn.close()
+
         flash("Quiz added successfully!", "success")
         return redirect(url_for("admin_dashboard"))
 
     conn.close()
-    return render_template("add_quiz.html", modules=modules)
+    return render_template("add_quiz.html", module=module)
+
 
 
 @app.route("/admin/add-questions/<int:quiz_id>", methods=["GET", "POST"])
@@ -319,16 +332,25 @@ def module_quizzes_admin(module_id):
         return redirect(url_for("login"))
 
     conn = get_db_connection()
-    quizzes = conn.execute("""
-        SELECT * FROM quizzes WHERE module_id = ?
-    """, (module_id,)).fetchall()
+
+    quizzes = conn.execute(
+        "SELECT * FROM quizzes WHERE module_id = ?",
+        (module_id,)
+    ).fetchall()
+
+    module = conn.execute(
+        "SELECT * FROM modules WHERE id = ?",
+        (module_id,)
+    ).fetchone()
+
     conn.close()
 
     return render_template(
         "admin_module_quizzes.html",
         quizzes=quizzes,
-        module_id=module_id
+        module=module   # 👈 IMPORTANT
     )
+
 
 @app.route("/admin/results")
 def admin_results():
