@@ -16,7 +16,23 @@ def get_db_connection():
 # Home page
 @app.route("/")
 def home():
-    return render_template("home.html")
+    conn = get_db_connection()
+
+    total_modules = conn.execute("SELECT COUNT(*) FROM modules").fetchone()[0]
+    total_quizzes = conn.execute("SELECT COUNT(*) FROM quizzes").fetchone()[0]
+    total_students = conn.execute(
+        "SELECT COUNT(*) FROM users WHERE role = 'student'"
+    ).fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "home.html",
+        total_modules=total_modules,
+        total_quizzes=total_quizzes,
+        total_students=total_students
+    )
+
 
 # Login page
 @app.route("/login", methods=["GET", "POST"])
@@ -398,11 +414,56 @@ def select_module_for_quiz():
 
 
 
-# Student dashboard
 @app.route("/student-dashboard")
 def student_dashboard():
     if "role" in session and session["role"] == "student":
-        return render_template("student_dashboard.html")
+        user_id = session["user_id"]
+        conn = get_db_connection()
+        
+        # Get student name
+        student = conn.execute("SELECT name FROM users WHERE id = ?", (user_id,)).fetchone()
+        student_name = student['name'] if student else "Student"
+
+        # Module-wise performance
+        modules = conn.execute("SELECT * FROM modules").fetchall()
+        module_labels = []
+        module_scores = []
+
+        for m in modules:
+            attempts = conn.execute("""
+                SELECT a.score, a.total_questions
+                FROM attempts a
+                JOIN quizzes q ON a.quiz_id = q.id
+                WHERE a.student_id=? AND q.module_id=?
+            """, (user_id, m['id'])).fetchall()
+
+            total_score = sum([a['score'] for a in attempts])
+            total_questions = sum([a['total_questions'] for a in attempts])
+            percent = round((total_score / total_questions * 100), 2) if total_questions else 0
+
+            module_labels.append(m['name'])
+            module_scores.append(percent)
+
+        # Total modules completed (number of quizzes attempted per module)
+        module_totals = []
+        for m in modules:
+            count = conn.execute("""
+                SELECT COUNT(*) as cnt
+                FROM attempts a
+                JOIN quizzes q ON a.quiz_id = q.id
+                WHERE a.student_id=? AND q.module_id=?
+            """, (user_id, m['id'])).fetchone()['cnt']
+            module_totals.append(count)
+
+        conn.close()
+
+        return render_template(
+            "student_dashboard.html",
+            student_name=student_name,
+            module_labels=module_labels,
+            module_scores=module_scores,
+            module_totals=module_totals
+        )
     return redirect(url_for("login"))
 
 
@@ -441,35 +502,78 @@ def attempt_quiz(quiz_id):
         return redirect(url_for("login"))
 
     conn = get_db_connection()
-
-    if request.method == "POST":
-        questions = conn.execute(
-            "SELECT * FROM questions WHERE quiz_id = ?", (quiz_id,)
-        ).fetchall()
-
-        score = 0
-        for q in questions:
-            selected = request.form.get(str(q["id"]))
-            if selected and int(selected) == q["correct_option"]:
-                score += 1
-
-        conn.execute("""
-            INSERT INTO attempts (student_id, quiz_id, score, total_questions)
-            VALUES (?, ?, ?, ?)
-        """, (session["user_id"], quiz_id, score, len(questions)))
-
-        conn.commit()
-        conn.close()
-
-        flash(f"You scored {score} / {len(questions)}", "success")
-        return redirect(url_for("student_results"))
-
-    questions = conn.execute(
-        "SELECT * FROM questions WHERE quiz_id = ?", (quiz_id,)
-    ).fetchall()
+    quiz = conn.execute("SELECT * FROM quizzes WHERE id = ?", (quiz_id,)).fetchone()
+    questions = conn.execute("SELECT * FROM questions WHERE quiz_id = ?", (quiz_id,)).fetchall()
     conn.close()
 
-    return render_template("attempt_quiz.html", questions=questions)
+    return render_template("attempt_quiz.html", quiz=quiz, questions=questions)
+
+
+import json
+
+import json  # make sure this is imported
+
+@app.route("/student/quiz-result/<int:quiz_id>")
+def quiz_result(quiz_id):
+    if session.get("role") != "student":
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    quiz = conn.execute("SELECT * FROM quizzes WHERE id = ?", (quiz_id,)).fetchone()
+    attempts = conn.execute("""
+        SELECT * FROM attempts 
+        WHERE student_id=? AND quiz_id=?
+        ORDER BY id DESC LIMIT 1
+    """, (session["user_id"], quiz_id)).fetchone()
+
+    questions = conn.execute("SELECT * FROM questions WHERE quiz_id=?", (quiz_id,)).fetchall()
+    conn.close()
+
+    # Parse the answers JSON in Python
+    attempts_answers = json.loads(attempts["answers"]) if attempts and attempts["answers"] else {}
+
+    return render_template(
+        "quiz_result.html",
+        quiz=quiz,
+        attempts=attempts,
+        questions=questions,
+        attempts_answers=attempts_answers  # pass to template
+    )
+
+
+import json
+
+@app.route("/student/submit-quiz/<int:quiz_id>", methods=["POST"])
+def submit_quiz(quiz_id):
+    if session.get("role") != "student":
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    questions = conn.execute("SELECT * FROM questions WHERE quiz_id = ?", (quiz_id,)).fetchall()
+
+    score = 0
+    answers = {}
+    for q in questions:
+        user_ans = request.form.get(str(q["id"]))
+        if user_ans:
+            user_ans = int(user_ans)
+            answers[q["id"]] = user_ans
+            if user_ans == q["correct_option"]:
+                score += 1
+        else:
+            answers[q["id"]] = None  # mark unanswered
+
+    # Save attempt with answers JSON
+    conn.execute("""
+        INSERT INTO attempts (student_id, quiz_id, score, total_questions, answers)
+        VALUES (?, ?, ?, ?, ?)
+    """, (session["user_id"], quiz_id, score, len(questions), json.dumps(answers)))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("quiz_result", quiz_id=quiz_id))
+
+
 
 @app.route("/student/results")
 def student_results():
@@ -478,15 +582,18 @@ def student_results():
 
     conn = get_db_connection()
     results = conn.execute("""
-        SELECT modules.name AS module_name,
-               quizzes.title,
-               attempts.score,
-               attempts.total_questions
-        FROM attempts
-        JOIN quizzes ON attempts.quiz_id = quizzes.id
-        JOIN modules ON quizzes.module_id = modules.id
-        WHERE attempts.student_id = ?
-    """, (session["user_id"],)).fetchall()
+    SELECT modules.name AS module_name,
+           quizzes.title,
+           attempts.score,
+           attempts.total_questions,
+           COUNT(a2.id) AS attempt_count
+    FROM attempts
+    JOIN quizzes ON attempts.quiz_id = quizzes.id
+    JOIN modules ON quizzes.module_id = modules.id
+    LEFT JOIN attempts a2 ON a2.quiz_id = quizzes.id AND a2.student_id = ?
+    WHERE attempts.student_id = ?
+    GROUP BY quizzes.id
+""", (session["user_id"], session["user_id"])).fetchall()
     conn.close()
 
     return render_template("student_results.html", results=results)
@@ -500,12 +607,24 @@ def module_quizzes(module_id):
 
     conn = get_db_connection()
     quizzes = conn.execute("""
-        SELECT * FROM quizzes
-        WHERE module_id = ? AND is_active = 1
-    """, (module_id,)).fetchall()
+        SELECT q.*,
+               IFNULL(a.attempt_count, 0) AS attempt_count,
+               IFNULL(a.percentage, 0) AS last_percentage
+        FROM quizzes q
+        LEFT JOIN (
+            SELECT quiz_id,
+                   COUNT(*) AS attempt_count,
+                   ROUND(MAX(score*100.0/total_questions), 2) AS percentage
+            FROM attempts
+            WHERE student_id = ?
+            GROUP BY quiz_id
+        ) a ON q.id = a.quiz_id
+        WHERE q.module_id = ? AND q.is_active = 1
+    """, (session["user_id"], module_id)).fetchall()
     conn.close()
 
     return render_template("module_quizzes.html", quizzes=quizzes)
+
 
 @app.route("/admin/students")
 def admin_students():

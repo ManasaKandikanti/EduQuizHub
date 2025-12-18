@@ -2,27 +2,114 @@
 {% block title %}Quizzes{% endblock %}
 
 {% block content %}
-<h3>Available Quizzes</h3>
+<style>
+html, body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(-45deg, #4e73df, #1cc88a, #6f42c1, #36b9cc);
+    background-size: 400% 400%;
+    animation: gradientMove 12s ease infinite;
+    margin: 0;
+    padding: 0;
+}
 
-{% if quizzes %}
-<table class="table table-bordered">
-    <tr>
-        <th>Quiz Title</th>
-        <th>Action</th>
-    </tr>
-    {% for quiz in quizzes %}
-    <tr>
-        <td>{{ quiz.title }}</td>
-        <td>
-            <a href="{{ url_for('attempt_quiz', quiz_id=quiz.id) }}"
-               class="btn btn-success">
-                Attempt
-            </a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-{% else %}
-<p class="text-muted">No active quizzes in this module.</p>
-{% endif %}
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.table-wrapper {
+    max-width: 900px;
+    margin: 50px auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+.table-wrapper h3 {
+    font-weight: 900;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.table thead {
+    background: #6f42c1;
+    color: #fff;
+}
+
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.btn-attempt {
+    border-radius: 50px;
+    padding: 6px 20px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #6f42c1, #4e73df);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-attempt:hover {
+    background: linear-gradient(135deg, #36b9cc, #1cc88a);
+    transform: scale(1.05);
+}
+
+/* Modern Gradient Back Button */
+.btn-back {
+    display: inline-block;
+    border-radius: 50px;
+    padding: 8px 25px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #36b9cc, #1cc88a);
+    border: none;
+    margin-bottom: 15px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+    background: linear-gradient(135deg, #4e73df, #6f42c1);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+</style>
+
+<div class="table-wrapper">
+    <a href="{{ url_for('student_modules') }}" class="btn-back">← Back to Modules</a>
+    <h3>Available Quizzes</h3>
+    {% if quizzes %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Quiz Title</th>
+                <th>Attempts</th>
+                <th>Last Score (%)</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for quiz in quizzes %}
+            <tr>
+                <td>{{ quiz.title }}</td>
+                <td>{{ quiz.attempt_count }}</td>
+                <td>{{ quiz.last_percentage }}%</td>
+                <td>
+                    <a href="{{ url_for('attempt_quiz', quiz_id=quiz.id) }}" class="btn-attempt">
+                        Attempt
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="text-center text-dark">No active quizzes in this module.</p>
+    {% endif %}
+</div>
 {% endblock %}

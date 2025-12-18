@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block title %}Quiz Result{% endblock %}
+
+{% block content %}
+<style>
+/* Animated gradient background */
+html, body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(-45deg, #4e73df, #1cc88a, #6f42c1, #36b9cc);
+    background-size: 400% 400%;
+    animation: gradientMove 12s ease infinite;
+    margin: 0;
+    padding: 0;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Result card */
+.result-card {
+    max-width: 850px;
+    margin: 60px auto;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.25);
+    background: #fff;
+    padding: 0;
+}
+
+/* Header gradient */
+.result-header {
+    background: linear-gradient(135deg, #6f42c1, #4e73df);
+    color: #fff;
+    padding: 25px;
+    text-align: center;
+}
+
+.result-header h3 {
+    margin: 0;
+    font-weight: 900;
+    font-size: 1.8rem;
+}
+
+/* Score box */
+.score-box {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px;
+    padding: 15px;
+    background: #f8f9fc;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.score-box div {
+    text-align: center;
+}
+
+/* Accordion styling */
+.accordion-button {
+    background: #f1f1f1;
+    color: #333;
+    font-weight: 600;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+    background: linear-gradient(135deg, #36b9cc, #1cc88a);
+    color: #fff;
+}
+
+.accordion-body ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.accordion-body li {
+    padding: 5px 0;
+}
+
+/* Back button */
+.btn-back-dashboard {
+    display: inline-block;
+    margin: 25px auto 30px auto;
+    background: linear-gradient(135deg, #6f42c1, #4e73df);
+    color: #fff;
+    padding: 10px 25px;
+    border-radius: 50px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-back-dashboard:hover {
+    background: linear-gradient(135deg, #36b9cc, #1cc88a);
+    transform: scale(1.05);
+    color: #fff;
+}
+</style>
+
+<div class="result-card">
+    <div class="result-header">
+        <h3>{{ quiz.title }} - Result</h3>
+    </div>
+
+    <div class="score-box">
+        <div>
+            <span>Score</span><br>
+            <strong>{{ attempts.score }} / {{ attempts.total_questions }}</strong>
+        </div>
+        <div>
+            <span>Percentage</span><br>
+            <strong>{{ ((attempts.score / attempts.total_questions) * 100) | round(2) }}%</strong>
+        </div>
+    </div>
+
+    <h4 class="mt-4 mb-3 text-center">Questions Details</h4>
+    <div class="accordion p-4" id="questionAccordion">
+        {% for q in questions %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ loop.index }}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}">
+                    Q{{ loop.index }}: {{ q.question }}
+                </button>
+            </h2>
+            <div id="collapse{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#questionAccordion">
+                <div class="accordion-body">
+                    {% set user_answer = attempts_answers[q.id|string] if q.id|string in attempts_answers else None %}
+                    <ul>
+                        <li><strong>Your Answer:</strong>
+                            {% if user_answer %}
+                                {{ q['option' ~ user_answer] }}
+                            {% else %}
+                                Not Answered
+                            {% endif %}
+                        </li>
+                        <li><strong>Correct Answer:</strong> {{ q['option' ~ q.correct_option] }}</li>
+                        <li>
+                            {% if user_answer == q.correct_option %}
+                                <span style="color:green; font-weight:700;">Correct</span>
+                            {% else %}
+                                <span style="color:red; font-weight:700;">Wrong</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center">
+        <a href="{{ url_for('student_dashboard') }}" class="btn-back-dashboard">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

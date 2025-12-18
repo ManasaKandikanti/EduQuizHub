@@ -2,28 +2,94 @@
 {% block title %}Attempt Quiz{% endblock %}
 
 {% block content %}
-<h3>Attempt Quiz</h3>
+<style>
+.quiz-container {
+    max-width: 700px;
+    margin: 50px auto;
+    background: #fff;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.2);
+}
+.question {
+    display: none;
+}
+.question.active {
+    display: block;
+}
+.btn-next, .btn-submit {
+    border-radius: 50px;
+    padding: 8px 25px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #6f42c1, #4e73df);
+    border: none;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+}
+.btn-next:hover, .btn-submit:hover {
+    background: linear-gradient(135deg, #36b9cc, #1cc88a);
+    transform: scale(1.05);
+}
+.timer {
+    font-weight: 900;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    text-align: right;
+    color: #d63384;
+}
+</style>
 
-<form method="post">
-    {% for q in questions %}
-    <div class="mb-3">
-        <p><strong>{{ q.question }}</strong></p>
-
-        {% for i in range(1,5) %}
-        <div class="form-check">
-            <input class="form-check-input"
-                   type="radio"
-                   name="{{ q.id }}"
-                   value="{{ i }}"
-                   required>
-            <label class="form-check-label">
-                {{ q["option" ~ i] }}
-            </label>
+<div class="quiz-container">
+    <div class="timer">Time Left: <span id="time"></span></div>
+    <form id="quizForm" method="post" action="{{ url_for('submit_quiz', quiz_id=quiz.id) }}">
+        {% for q in questions %}
+        <div class="question" id="question-{{ loop.index0 }}">
+            <p><strong>Q{{ loop.index }}. {{ q.question }}</strong></p>
+            {% for i in range(1,5) %}
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{ q.id }}" value="{{ i }}" required>
+                <label class="form-check-label">{{ q["option" ~ i] }}</label>
+            </div>
+            {% endfor %}
+            {% if not loop.last %}
+            <button type="button" class="btn-next" onclick="nextQuestion({{ loop.index0 }})">Next</button>
+            {% else %}
+            <button type="submit" class="btn-submit">Submit Quiz</button>
+            {% endif %}
         </div>
         {% endfor %}
-    </div>
-    {% endfor %}
+    </form>
+</div>
 
-    <button class="btn btn-primary">Submit Quiz</button>
-</form>
+<script>
+// Step-by-step questions
+let current = 0;
+const questions = document.querySelectorAll(".question");
+questions[current].classList.add("active");
+
+function nextQuestion(index) {
+    questions[index].classList.remove("active");
+    questions[index + 1].classList.add("active");
+}
+
+// Timer
+let totalSeconds = {{ quiz.time_limit * 60 if quiz.time_limit else 10*60 }};
+const timeDisplay = document.getElementById("time");
+
+function startTimer() {
+    const timer = setInterval(() => {
+        let mins = Math.floor(totalSeconds / 60);
+        let secs = totalSeconds % 60;
+        timeDisplay.textContent = mins + ":" + (secs < 10 ? "0" + secs : secs);
+        if (totalSeconds <= 0) {
+            clearInterval(timer);
+            alert("Time is up! Quiz will be submitted automatically.");
+            document.getElementById("quizForm").submit();
+        }
+        totalSeconds--;
+    }, 1000);
+}
+startTimer();
+</script>
 {% endblock %}

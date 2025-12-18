@@ -3,6 +3,7 @@ import sqlite3
 conn = sqlite3.connect("database.db")
 c = conn.cursor()
 
+# Users table
 c.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -13,6 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
 )
 """)
 
+# Modules table
 c.execute("""
 CREATE TABLE IF NOT EXISTS modules (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,6 +22,7 @@ CREATE TABLE IF NOT EXISTS modules (
 )
 """)
 
+# Quizzes table
 c.execute("""
 CREATE TABLE IF NOT EXISTS quizzes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,6 +34,7 @@ CREATE TABLE IF NOT EXISTS quizzes (
 )
 """)
 
+# Questions table
 c.execute("""
 CREATE TABLE IF NOT EXISTS questions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,6 +49,7 @@ CREATE TABLE IF NOT EXISTS questions (
 )
 """)
 
+# Attempts table with answers column (JSON)
 c.execute("""
 CREATE TABLE IF NOT EXISTS attempts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,6 +57,7 @@ CREATE TABLE IF NOT EXISTS attempts (
     quiz_id INTEGER NOT NULL,
     score INTEGER,
     total_questions INTEGER,
+    answers TEXT,
     FOREIGN KEY (student_id) REFERENCES users(id),
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id)
 )
@@ -59,4 +65,4 @@ CREATE TABLE IF NOT EXISTS attempts (
 
 conn.commit()
 conn.close()
-print("Database initialized successfully!")
+print("Database initialized successfully with answers column in attempts table!")

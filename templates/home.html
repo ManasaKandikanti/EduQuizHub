@@ -1,12 +1,462 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}EduQuizHub | Learn • Quiz • Analyze{% endblock %}
+
 {% block content %}
-<div class="text-center">
-    <h1 class="display-4 mb-4">Welcome to EduQuizHub</h1>
-    <p class="lead mb-4">Organize modules, take quizzes, and track your results easily.</p>
-    <div class="d-flex justify-content-center gap-3">
-        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Login</a>
-        <a href="{{ url_for('register') }}" class="btn btn-success btn-lg">Register</a>
+
+<style>
+html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.page-container {
+    margin-top: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+}
+
+/* ================= HERO ================= */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    padding-top: 120px;
+    padding-bottom: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(-45deg,#4e73df,#1cc88a,#6f42c1,#36b9cc);
+    background-size: 400% 400%;
+    animation: gradientMove 12s ease infinite;
+    overflow: hidden;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.hero-content {
+    max-width: 900px;
+    z-index: 2;
+    animation: fadeUp 1.2s ease;
+}
+
+@keyframes fadeUp {
+    from { opacity:0; transform:translateY(40px); }
+    to { opacity:1; transform:translateY(0); }
+}
+
+/* FLOATING BLOBS */
+.shape {
+    position:absolute;
+    width:280px;
+    height:280px;
+    background:rgba(255,255,255,0.18);
+    filter:blur(90px);
+    border-radius:50%;
+    animation: float 10s infinite ease-in-out;
+}
+.shape.one { top:10%; left:10%; }
+.shape.two { bottom:15%; right:12%; animation-delay:3s; }
+.shape.three { top:40%; right:28%; animation-delay:6s; }
+
+@keyframes float {
+    0%,100% { transform:translateY(0); }
+    50% { transform:translateY(-40px); }
+}
+
+/* ===== ULTRA ANIMATED BUTTONS ===== */
+.hero-btn {
+    position: relative;
+    padding: 16px 50px;
+    border-radius: 60px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    overflow: hidden;
+    border: none;
+    z-index: 1;
+    transition: all 0.4s ease;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+}
+
+/* Moving gradient */
+.hero-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        #4e73df,
+        #00c6ff,
+        #6f42c1,
+        #1cc88a
+    );
+    background-size: 300% 300%;
+    animation: gradientShift 6s ease infinite;
+    z-index: -1;
+}
+
+/* Ripple shine */
+.hero-btn::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -100%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+        circle,
+        rgba(255,255,255,0.4) 0%,
+        transparent 60%
+    );
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: all 0.6s ease;
+}
+
+.hero-btn:hover::after {
+    left: 100%;
+    opacity: 1;
+}
+
+.hero-btn:hover {
+    transform: translateY(-8px) scale(1.15);
+    box-shadow: 0 35px 80px rgba(0,0,0,0.55);
+}
+
+/* Pulse glow */
+.hero-btn:hover {
+    animation: pulseGlow 1.5s infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 rgba(255,255,255,0.4); }
+    50% { box-shadow: 0 0 35px rgba(255,255,255,0.6); }
+    100% { box-shadow: 0 0 0 rgba(255,255,255,0.4); }
+}
+
+/* Button text color */
+.btn-login {
+    color: #1e3a8a;
+    background: #fff;
+}
+
+.btn-register {
+    color: #fff;
+}
+
+
+/* ================= SECTIONS ================= */
+section {
+    width:100%;
+    padding:100px 0;
+}
+
+.content-wrap {
+    max-width:1200px;
+    margin:auto;
+    padding:0 20px;
+}
+
+/* ================= STATS ================= */
+.stats {
+    background:#ffffff;
+}
+
+.stat-card {
+    background:#fff;
+    border-radius:22px;
+    padding:40px 25px;
+    text-align:center;
+    box-shadow:0 20px 40px rgba(0,0,0,0.15);
+    transition:0.4s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-12px) scale(1.06);
+    box-shadow:0 35px 70px rgba(78,115,223,0.35);
+}
+
+.stat-number {
+    font-size:3rem;
+    font-weight:800;
+    color:#4e73df;
+}
+
+/* ================= FEATURES ================= */
+.features {
+    background:#f4f6fb;
+}
+
+.feature-card {
+    background:#fff;
+    border-radius:22px;
+    padding:40px 30px;
+    text-align:center;
+    transition:0.4s ease;
+    box-shadow:0 20px 40px rgba(0,0,0,0.15);
+}
+
+.feature-card:hover {
+    transform:translateY(-12px) scale(1.05);
+}
+
+/* ================= CTA ================= */
+.cta {
+    background:linear-gradient(135deg,#111827,#1f2937);
+    color:#fff;
+    text-align:center;
+}
+
+
+/* ===== ANIMATED CARDS ===== */
+.stat-card,
+.feature-card {
+    position: relative;
+    background: #fff;
+    border-radius: 26px;
+    padding: 45px 30px;
+    text-align: center;
+    transition: all 0.5s ease;
+    transform-style: preserve-3d;
+    box-shadow: 0 25px 45px rgba(0,0,0,0.15);
+    cursor: pointer;
+}
+
+/* Glow border */
+.stat-card::before,
+.feature-card::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 28px;
+    background: linear-gradient(
+        120deg,
+        #4e73df,
+        #00c6ff,
+        #6f42c1
+    );
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.5s ease;
+}
+
+/* Hover effect */
+.stat-card:hover,
+.feature-card:hover {
+    transform: translateY(-18px) scale(1.08) rotateX(6deg);
+    box-shadow: 0 45px 90px rgba(0,0,0,0.35);
+}
+
+.stat-card:hover::before,
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+/* Card number animation */
+.stat-number {
+    font-size: 3.2rem;
+    font-weight: 900;
+    color: #4e73df;
+    transition: transform 0.4s ease;
+}
+
+.stat-card:hover .stat-number {
+    transform: scale(1.2);
+}
+
+/* Feature title pop */
+.feature-card h5 {
+    font-weight: 800;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover h5 {
+    transform: translateY(-5px);
+}
+
+/* ===== BOTTOM CTA BUTTON (Create Account) ===== */
+.cta-btn {
+    display: inline-block;
+    padding: 14px 20px;
+    font-size: 1.15rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    border-radius: 60px;
+    color: #ffffff;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        135deg,
+        #22c55e,
+        #16a34a,
+        #4ade80
+    );
+    background-size: 200% 200%;
+    animation: ctaGradient 6s ease infinite;
+    box-shadow: 0 25px 60px rgba(34, 197, 94, 0.45);
+    transition: all 0.4s ease;
+}
+
+/* Shine sweep */
+.cta-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.5),
+        transparent
+    );
+    transition: all 0.7s ease;
+}
+
+/* Glow ring */
+.cta-btn::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 60px;
+    background: linear-gradient(
+        120deg,
+        #86efac,
+        #22c55e,
+        #4ade80
+    );
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.4s ease;
+}
+
+/* Hover effects */
+.cta-btn:hover {
+    transform: translateY(-10px) scale(1.12);
+    box-shadow: 0 40px 90px rgba(34, 197, 94, 0.65);
+}
+
+.cta-btn:hover::before {
+    left: 120%;
+}
+
+.cta-btn:hover::after {
+    opacity: 1;
+}
+
+/* Gradient animation */
+@keyframes ctaGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
+</style>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+    <div class="shape one"></div>
+    <div class="shape two"></div>
+    <div class="shape three"></div>
+
+    <div class="hero-content">
+        <h1 class="display-4 fw-bold mb-4">EduQuizHub 🎓</h1>
+        <p class="lead mb-5">
+            Smart platform to create modules, conduct quizzes,
+            and analyze student performance visually.
+        </p>
+
+        <div class="d-flex justify-content-center gap-4">
+            <a href="{{ url_for('login') }}" class="hero-btn btn-login btn-lg">
+                Login
+            </a>
+            <a href="{{ url_for('register') }}" class="hero-btn btn-register btn-lg">
+                Get Started
+            </a>
+        </div>
     </div>
-</div>
+</section>
+
+<!-- ================= STATS ================= -->
+<section class="stats">
+    <div class="content-wrap">
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_modules }}</div>
+                    <p class="fw-semibold mt-2">Modules Created</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_quizzes }}</div>
+                    <p class="fw-semibold mt-2">Quizzes Available</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_students }}</div>
+                    <p class="fw-semibold mt-2">Active Students</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= FEATURES ================= -->
+<section class="features">
+    <div class="content-wrap text-center">
+        <h2 class="fw-bold mb-5">Why Choose EduQuizHub?</h2>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <h5 class="fw-bold">📚 Module Management</h5>
+                    <p class="text-muted">Organize subjects efficiently.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <h5 class="fw-bold">📝 Online Quizzes</h5>
+                    <p class="text-muted">Auto-evaluation with instant scores.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <h5 class="fw-bold">📊 Analytics</h5>
+                    <p class="text-muted">Visual performance tracking.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section class="cta">
+    <div class="content-wrap">
+        <h2 class="fw-bold mb-4">Ready to Explore? 🚀</h2>
+        <p class="mb-4">Join thousands of learners on EduQuizHub</p>
+        <a href="{{ url_for('register') }}" class="cta-btn">
+            ✨ Create Your Account
+        </a>        
+    </div>
+</section>
+
 {% endblock %}

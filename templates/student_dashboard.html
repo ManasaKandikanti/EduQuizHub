@@ -2,18 +2,153 @@
 {% block title %}Student Dashboard{% endblock %}
 
 {% block content %}
-<div class="text-center">
-    <h2 class="mb-4">Welcome to EduQuizHub</h2>
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(-45deg, #4e73df, #1cc88a, #6f42c1, #36b9cc);
+    background-size: 400% 400%;
+    animation: gradientMove 12s ease infinite;
+    font-family: 'Segoe UI', sans-serif;
+}
 
-    <a href="{{ url_for('student_modules') }}"
-       class="btn btn-primary btn-lg px-5">
-        Start Learning
-    </a>
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 
-    <div class="mt-4">
-        <a href="{{ url_for('student_results') }}" class="btn btn-outline-info">
-            My Results
-        </a>
+.dashboard-wrapper {
+    min-height: 100vh;
+    padding: 50px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.glass-card {
+    width: 100%;
+    max-width: 1000px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(14px);
+    padding: 40px;
+    border-radius: 22px;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.35);
+    color: #fff;
+    margin-bottom: 30px;
+    text-align: center;
+    animation: fadeUp 1s ease;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h2, h3 { font-weight: 900; letter-spacing: 1px; margin-bottom: 20px; }
+
+.btn-dashboard {
+    border-radius: 50px;
+    padding: 14px 35px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #6f42c1, #4e73df);
+    border: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    transition: all 0.4s ease;
+    margin-bottom: 15px;
+    display: inline-block;
+    margin-right: 1rem;
+}
+
+.btn-dashboard:hover {
+    background: linear-gradient(135deg, #36b9cc, #1cc88a);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}
+
+/* Chart container styling */
+.chart-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.chart-card {
+    background: #ffffff; /* white background */
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    color: #000;
+}
+
+canvas {
+    background: #fff; /* ensure chart canvas is white */
+    border-radius: 10px;
+    padding: 10px;
+}
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="glass-card">
+        <h2 class="text-white">Welcome, {{ student_name }}!</h2>
+        <a href="{{ url_for('student_modules') }}" class="btn-dashboard">Start Learning</a>
+        <a href="{{ url_for('student_results') }}" class="btn-dashboard">My Results</a>
+    </div>
+
+    <div class="chart-row">
+        <div class="chart-card">
+            <h3>Module-wise Performance (%)</h3>
+            <canvas id="moduleChart" width="400" height="250"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h3>Total Quizzes Attempted</h3>
+            <canvas id="totalChart" width="400" height="250"></canvas>
+        </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const modules = {{ module_labels|tojson }};
+const scores = {{ module_scores|tojson }};
+const totals = {{ module_totals|tojson }};
+
+// Bar chart for module performance
+new Chart(document.getElementById('moduleChart'), {
+    type: 'bar',
+    data: {
+        labels: modules,
+        datasets: [{
+            label: 'Score (%)',
+            data: scores,
+            backgroundColor: 'rgba(54, 185, 204, 0.7)',
+            borderColor: 'rgba(36, 139, 203, 1)',
+            borderWidth: 1,
+            borderRadius: 8
+        }]
+    },
+    options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
+});
+
+// Doughnut chart for total quizzes attempted
+new Chart(document.getElementById('totalChart'), {
+    type: 'doughnut',
+    data: {
+        labels: modules,
+        datasets: [{
+            label: 'Quizzes Attempted',
+            data: totals,
+            backgroundColor: ['#6f42c1', '#4e73df', '#36b9cc', '#1cc88a']
+        }]
+    },
+    options: { responsive: true }
+});
+</script>
 {% endblock %}
