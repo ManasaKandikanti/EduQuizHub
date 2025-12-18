@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(-45deg, #4e73df, #1cc88a, #6f42c1, #36b9cc);
+    background-size: 400% 400%;
+    animation: gradientMove 12s ease infinite;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden; /* prevent scrolling */
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Full screen flex wrapper */
+.fullscreen-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+/* Form card styling */
+.card-edit {
+    width: 100%;
+    max-width: 500px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(20px);
+    color: #fff;
+    padding: 40px;
+    border-radius: 25px;
+    box-shadow: 0 35px 80px rgba(0,0,0,0.4);
+    animation: fadeUp 1s ease;
+    text-align: center;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card-edit h3 {
+    margin-bottom: 30px;
+    font-weight: 900;
+}
+
+.form-label {
+    font-weight: 600;
+}
+
+.form-control {
+    border-radius: 50px;
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+    margin-bottom: 20px;
+}
+
+.form-control:focus {
+    background: rgba(255,255,255,0.2);
+    box-shadow: 0 0 10px rgba(255,255,255,0.3);
+    color: #fff;
+    outline: none;
+}
+
+.btn-edit-save, .btn-edit-back {
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-edit-save {
+    background: linear-gradient(135deg, #36b9cc, #1cc88a);
+    color: #fff;
+    border: none;
+}
+
+.btn-edit-save:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.btn-edit-back {
+    background: linear-gradient(135deg, #4e73df, #6f42c1);
+    color: #fff;
+    border: none;
+}
+
+.btn-edit-back:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.d-flex {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+</style>
+
+<div class="fullscreen-wrapper">
+    <div class="card-edit">
+        <h3>Edit Profile</h3>
+        <form method="POST">
+            <div>
+                <label for="name" class="form-label">Name</label>
+                <input type="text" name="name" value="{{ student.name }}" class="form-control" required>
+            </div>
+            <div>
+                <label for="email" class="form-label">Email</label>
+                <input type="email" name="email" value="{{ student.email }}" class="form-control" required>
+            </div>
+            <div class="d-flex">
+                <a href="{{ url_for('student_profile') }}" class="btn-edit-back">Back</a>
+                <button type="submit" class="btn-edit-save">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

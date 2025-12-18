@@ -79,6 +79,115 @@ def send_otp_email(to_email, otp):
     mail.send(msg)
 
 
+# Edit Profile Page
+@app.route("/student/edit-profile", methods=["GET", "POST"])
+def edit_profile():
+    if session.get("role") != "student":
+        return redirect(url_for("login"))
+
+    user_id = session["user_id"]
+    conn = get_db_connection()
+    student = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    conn.close()
+
+    if request.method == "POST":
+        name = request.form["name"]
+        email = request.form["email"]
+
+        # If email changed, send OTP
+        if email != student["email"]:
+            import random
+            otp = random.randint(100000, 999999)
+            session["otp"] = otp
+            session["new_name"] = name
+            session["new_email"] = email
+
+            # Send OTP email
+            send_otp_email(email, otp)
+            flash("OTP sent to new email. Please verify.", "info")
+            return redirect(url_for("verify_otp_update"))
+
+        # If only name changed, update directly
+        conn = get_db_connection()
+        conn.execute("UPDATE users SET name = ? WHERE id = ?", (name, user_id))
+        conn.commit()
+        conn.close()
+        flash("Profile updated successfully!", "success")
+        return redirect(url_for("student_profile"))
+
+    return render_template("edit_profile.html", student=student)
+
+
+# OTP verification for email update
+@app.route("/student/verify-otp-update", methods=["GET", "POST"])
+def verify_otp_update():
+    if session.get("role") != "student":
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        user_otp = request.form["otp"]
+        if str(user_otp) == str(session.get("otp")):
+            # Update name and email
+            conn = get_db_connection()
+            conn.execute(
+                "UPDATE users SET name = ?, email = ? WHERE id = ?",
+                (session["new_name"], session["new_email"], session["user_id"])
+            )
+            conn.commit()
+            conn.close()
+
+            # Clear OTP session variables
+            session.pop("otp", None)
+            session.pop("new_name", None)
+            session.pop("new_email", None)
+
+            flash("Profile updated successfully!", "success")
+            return redirect(url_for("student_profile"))
+        else:
+            flash("Invalid OTP. Try again.", "danger")
+            return redirect(url_for("verify_otp_update"))
+
+    return render_template("verify_otp_update.html")
+
+
+@app.route("/student/profile")
+def student_profile():
+    if session.get("role") != "student":
+        return redirect(url_for("login"))
+
+    user_id = session["user_id"]
+    conn = get_db_connection()
+    student = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+
+    # Module-wise performance
+    modules = conn.execute("SELECT * FROM modules").fetchall()
+    module_labels = []
+    module_scores = []
+
+    for m in modules:
+        attempts = conn.execute("""
+            SELECT a.score, a.total_questions
+            FROM attempts a
+            JOIN quizzes q ON a.quiz_id = q.id
+            WHERE a.student_id=? AND q.module_id=?
+        """, (user_id, m['id'])).fetchall()
+
+        total_score = sum([a['score'] for a in attempts])
+        total_questions = sum([a['total_questions'] for a in attempts])
+        percent = round((total_score / total_questions * 100), 2) if total_questions else 0
+
+        module_labels.append(m['name'])
+        module_scores.append(percent)
+
+    conn.close()
+    return render_template(
+        "student_profile.html",
+        student=student,
+        module_labels=module_labels,
+        module_scores=module_scores
+    )
+
+
 # Register page
 import re
 

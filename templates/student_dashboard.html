@@ -25,6 +25,7 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
 }
 
 .glass-card {
@@ -37,7 +38,9 @@ html, body {
     box-shadow: 0 30px 70px rgba(0,0,0,0.35);
     color: #fff;
     margin-bottom: 30px;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     animation: fadeUp 1s ease;
 }
 
@@ -78,7 +81,7 @@ h2, h3 { font-weight: 900; letter-spacing: 1px; margin-bottom: 20px; }
 }
 
 .chart-card {
-    background: #ffffff; /* white background */
+    background: #ffffff;
     border-radius: 15px;
     padding: 20px;
     max-width: 480px;
@@ -88,19 +91,55 @@ h2, h3 { font-weight: 900; letter-spacing: 1px; margin-bottom: 20px; }
 }
 
 canvas {
-    background: #fff; /* ensure chart canvas is white */
+    background: #fff;
     border-radius: 10px;
     padding: 10px;
+}
+
+/* User profile button/icon next to welcome message */
+.user-profile-btn {
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(10px);
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.user-profile-btn img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-profile-btn:hover {
+    background: rgba(255,255,255,0.4);
 }
 </style>
 
 <div class="dashboard-wrapper">
+    <!-- Welcome Card with Profile Button -->
     <div class="glass-card">
         <h2 class="text-white">Welcome, {{ student_name }}!</h2>
+        <a href="{{ url_for('student_profile') }}" class="user-profile-btn">
+            <img src="{{ url_for('static', filename='user-icon.png') }}" alt="Profile Icon">
+            My Profile
+        </a>              
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="glass-card" style="flex-direction: column; text-align: center;">
         <a href="{{ url_for('student_modules') }}" class="btn-dashboard">Start Learning</a>
         <a href="{{ url_for('student_results') }}" class="btn-dashboard">My Results</a>
     </div>
 
+    <!-- Charts -->
     <div class="chart-row">
         <div class="chart-card">
             <h3>Module-wise Performance (%)</h3>
