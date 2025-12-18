@@ -6,6 +6,7 @@
     body {
         background: linear-gradient(135deg, #667eea, #764ba2);
         min-height: 100vh;
+        margin-bottom: 2rem;
     }
 
     /* Title */
@@ -21,7 +22,7 @@
         position: relative;
         border-radius: 24px;
         background: #ffffff;
-        cursor: pointer; /* 👈 hand cursor */
+        cursor: pointer; /* hand cursor */
         overflow: hidden;
         transition: all 0.5s ease;
         animation: fadeUp 1s ease-in-out;
@@ -33,12 +34,7 @@
         position: absolute;
         inset: -3px;
         border-radius: 26px;
-        background: linear-gradient(
-            120deg,
-            #667eea,
-            #00c6ff,
-            #764ba2
-        );
+        background: linear-gradient(120deg, #667eea, #00c6ff, #764ba2);
         z-index: -1;
         opacity: 0;
         transition: opacity 0.5s ease;
@@ -80,49 +76,31 @@
 
     /* Animations */
     @keyframes fadeUp {
-        from {
-            opacity: 0;
-            transform: translateY(35px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(35px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes fadeDown {
-        from {
-            opacity: 0;
-            transform: translateY(-35px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(-35px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 
-<div class="container mt-5">
+<div class="container mt-5 ">
     <h2 class="text-center mb-5 dashboard-title">
         🎯 Admin Control Panel
     </h2>
 
     <div class="row g-4 justify-content-center">
-
         <!-- Manage Modules -->
         <div class="col-md-4">
-            <a href="{{ url_for('manage_modules') }}"
-               class="text-decoration-none text-dark">
+            <a href="{{ url_for('manage_modules') }}" class="text-decoration-none text-dark">
                 <div class="card dashboard-card text-center h-100 p-4">
                     <div class="card-body">
                         <div class="card-icon text-primary">📚</div>
                         <h5 class="fw-bold">Manage Modules</h5>
-                        <p class="text-muted">
-                            Create, edit and organize academic modules.
-                        </p>
-                        <span class="btn btn-primary btn-custom">
-                            Go to Modules
-                        </span>
+                        <p class="text-muted">Create, edit and organize academic modules.</p>
+                        <span class="btn btn-primary btn-custom">Go to Modules</span>
                     </div>
                 </div>
             </a>
@@ -130,18 +108,13 @@
 
         <!-- Manage Quizzes -->
         <div class="col-md-4">
-            <a href="{{ url_for('select_module_for_quiz') }}"
-               class="text-decoration-none text-dark">
+            <a href="{{ url_for('select_module_for_quiz') }}" class="text-decoration-none text-dark">
                 <div class="card dashboard-card text-center h-100 p-4">
                     <div class="card-body">
                         <div class="card-icon text-success">📝</div>
                         <h5 class="fw-bold">Manage Quizzes</h5>
-                        <p class="text-muted">
-                            Create quizzes and assign them to modules.
-                        </p>
-                        <span class="btn btn-success btn-custom">
-                            Go to Quizzes
-                        </span>
+                        <p class="text-muted">Create quizzes and assign them to modules.</p>
+                        <span class="btn btn-success btn-custom">Go to Quizzes</span>
                     </div>
                 </div>
             </a>
@@ -149,18 +122,41 @@
 
         <!-- Monitor Results -->
         <div class="col-md-4">
-            <a href="{{ url_for('select_quiz_for_results') }}"
-               class="text-decoration-none text-dark">
+            <a href="{{ url_for('select_quiz_for_results') }}" class="text-decoration-none text-dark">
                 <div class="card dashboard-card text-center h-100 p-4">
                     <div class="card-body">
                         <div class="card-icon text-warning">📊</div>
                         <h5 class="fw-bold">Monitor Results</h5>
-                        <p class="text-muted">
-                            View student attempts and performance analytics.
-                        </p>
-                        <span class="btn btn-warning btn-custom text-white">
-                            View Results
-                        </span>
+                        <p class="text-muted">View student attempts and performance analytics.</p>
+                        <span class="btn btn-warning btn-custom text-white">View Results</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Manage Students -->
+        <div class="col-md-4">
+            <a href="{{ url_for('admin_students') }}" class="text-decoration-none text-dark">
+                <div class="card dashboard-card text-center h-100 p-4">
+                    <div class="card-body">
+                        <div class="card-icon text-info">👩‍🎓</div>
+                        <h5 class="fw-bold">Manage Students</h5>
+                        <p class="text-muted">View student profiles, quiz attempts, and performance analytics.</p>
+                        <span class="btn btn-info btn-custom text-white">Go to Students</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Admin Info -->
+        <div class="col-md-4">
+            <a href="{{ url_for('admin_info') }}" class="text-decoration-none text-dark">
+                <div class="card dashboard-card text-center h-100 p-4">
+                    <div class="card-body">
+                        <div class="card-icon text-secondary">📈</div>
+                        <h5 class="fw-bold">Admin Info</h5>
+                        <p class="text-muted">View admin profile, total modules, and total quizzes.</p>
+                        <span class="btn btn-secondary btn-custom text-white">View Info</span>
                     </div>
                 </div>
             </a>

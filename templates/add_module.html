@@ -3,9 +3,21 @@
 
 {% block content %}
 <style>
-    /* Page background */
+    /* Full-page background & flex center */
     body {
         background: linear-gradient(135deg, #667eea, #764ba2);
+        min-height: 100vh;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        overflow: hidden; /* removes scroll */
+    }
+
+    /* Flex container to center everything */
+    .center-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         min-height: 100vh;
     }
 
@@ -15,13 +27,15 @@
         border-radius: 22px;
         padding: 35px;
         box-shadow: 0 25px 45px rgba(0,0,0,0.2);
+        width: 100%;
+        max-width: 450px;
         animation: fadeUp 0.8s ease;
+        text-align: center;
     }
 
     /* Title */
     .form-title {
         font-weight: 800;
-        text-align: center;
         margin-bottom: 25px;
         color: #333;
     }
@@ -53,6 +67,7 @@
         box-shadow: 0 12px 25px rgba(0,114,255,0.45);
         transition: all 0.35s ease;
         cursor: pointer;
+        width: 100%;
     }
 
     .btn-save-module:hover {
@@ -68,6 +83,7 @@
         padding: 8px 20px;
         font-weight: 600;
         transition: all 0.3s ease;
+        margin-bottom: 20px;
     }
 
     .btn-back:hover {
@@ -76,50 +92,35 @@
 
     /* Animation */
     @keyframes fadeUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
+<div class="center-container">
+    <!-- Back to Modules -->
+    <a href="{{ url_for('manage_modules') }}" class="btn btn-light btn-back">
+        ⬅ Back to Modules
+    </a>
 
-        <!-- Back to Modules -->
-        <div class="mb-3">
-            <a href="{{ url_for('manage_modules') }}"
-               class="btn btn-light btn-back">
-                ⬅ Back to Modules
-            </a>
-        </div>
-
-        <!-- Form Card -->
-        <div class="form-card">
-            <h3 class="form-title">➕ Add New Module</h3>
-
-            <form method="POST">
-                <div class="mb-4">
-                    <label class="form-label fw-semibold">Module Name</label>
-                    <input type="text"
-                           name="module_name"
-                           class="form-control"
-                           placeholder="Enter module name"
-                           required>
-                </div>
-
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-save-module">
-                        💾 Save Module
-                    </button>
-                </div>
-            </form>
-        </div>
-
+    <!-- Form Card -->
+    <div class="form-card">
+        <h3 class="form-title">➕ Add New Module</h3>
+        <form method="POST">
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Module Name</label>
+                <input type="text"
+                       name="module_name"
+                       class="form-control"
+                       placeholder="Enter module name"
+                       required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-save-module">
+                    💾 Save Module
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

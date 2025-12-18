@@ -275,7 +275,13 @@ def select_quiz_for_results():
         return redirect(url_for("login"))
 
     conn = get_db_connection()
-    quizzes = conn.execute("SELECT * FROM quizzes").fetchall()
+    # Join quizzes with modules to get module name
+    quizzes = conn.execute("""
+        SELECT quizzes.*, modules.name AS module_name
+        FROM quizzes
+        JOIN modules ON quizzes.module_id = modules.id
+        ORDER BY modules.name, quizzes.title
+    """).fetchall()
     conn.close()
 
     return render_template(
@@ -283,6 +289,7 @@ def select_quiz_for_results():
         quizzes=quizzes,
         action="view_results"
     )
+
 
 @app.route("/admin/view-results/<int:quiz_id>")
 def view_results(quiz_id):
@@ -296,12 +303,14 @@ def view_results(quiz_id):
     results = conn.execute("""
         SELECT
             u.name AS student_name,
+            m.name AS module_name,
             q.title AS quiz_title,
             a.score,
             a.total_questions
         FROM attempts a
         JOIN users u ON a.student_id = u.id
         JOIN quizzes q ON a.quiz_id = q.id
+        JOIN modules m ON q.module_id = m.id
         WHERE a.quiz_id = ?
     """, (quiz_id,)).fetchall()
 
@@ -311,8 +320,6 @@ def view_results(quiz_id):
         results=results,
         quiz=quiz
     )
-
-
 
 
 @app.route("/admin/modules")
@@ -499,6 +506,135 @@ def module_quizzes(module_id):
     conn.close()
 
     return render_template("module_quizzes.html", quizzes=quizzes)
+
+@app.route("/admin/students")
+def admin_students():
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    students = conn.execute("SELECT * FROM users WHERE role = 'student'").fetchall()
+    conn.close()
+    return render_template("admin_students.html", students=students)
+
+@app.route("/admin/student/<int:student_id>")
+def admin_student_detail(student_id):
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    student = conn.execute("SELECT * FROM users WHERE id = ?", (student_id,)).fetchone()
+
+    quizzes = conn.execute("""
+        SELECT m.name AS module_name,
+               q.title AS quiz_title,
+               a.score,
+               a.total_questions
+        FROM attempts a
+        JOIN quizzes q ON a.quiz_id = q.id
+        JOIN modules m ON q.module_id = m.id
+        WHERE a.student_id = ?
+        ORDER BY m.name, q.title
+    """, (student_id,)).fetchall()
+
+    # Calculate totals and overall percentage
+    total_score = sum(q['score'] for q in quizzes)
+    total_possible_score = sum(q['total_questions'] for q in quizzes)
+    overall_percentage = round((total_score / total_possible_score * 100) if total_possible_score else 0, 2)
+
+    # Module-wise chart
+    modules_dict = {}
+    for q in quizzes:
+        if q['module_name'] not in modules_dict:
+            modules_dict[q['module_name']] = []
+        modules_dict[q['module_name']].append((q['score'], q['total_questions']))
+
+    modules_labels = []
+    modules_scores = []
+    for module, scores in modules_dict.items():
+        modules_labels.append(module)
+        avg = round(sum(s[0] for s in scores) / sum(s[1] for s in scores) * 100, 2) if scores else 0
+        modules_scores.append(avg)
+
+    quizzes_labels = [q['quiz_title'] for q in quizzes]
+    quizzes_scores = [round(q['score'] / q['total_questions'] * 100, 2) if q['total_questions'] else 0 for q in quizzes]
+
+    conn.close()
+
+    return render_template(
+        "admin_student_detail.html",
+        student=student,
+        quizzes=quizzes,
+        total_quizzes=len(quizzes),
+        total_score=total_score,
+        total_possible_score=total_possible_score,
+        overall_percentage=overall_percentage,
+        modules_labels=modules_labels,
+        modules_scores=modules_scores,
+        quizzes_labels=quizzes_labels,
+        quizzes_scores=quizzes_scores
+    )
+
+
+@app.route("/admin/info")
+def admin_info():
+    if session.get("role") != "admin":
+        flash("Unauthorized access", "danger")
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    admin = conn.execute("SELECT * FROM users WHERE role='admin'").fetchone()
+    total_modules = conn.execute("SELECT COUNT(*) FROM modules").fetchone()[0]
+    total_quizzes = conn.execute("SELECT COUNT(*) FROM quizzes").fetchone()[0]
+    total_active_quizzes = conn.execute("SELECT COUNT(*) FROM quizzes WHERE is_active=1").fetchone()[0]
+    total_students = conn.execute("SELECT COUNT(*) FROM users WHERE role='student'").fetchone()[0]
+    conn.close()
+
+    return render_template(
+        "admin_info.html",
+        admin=admin,
+        total_modules=total_modules,
+        total_quizzes=total_quizzes,
+        total_active_quizzes=total_active_quizzes,
+        total_students=total_students
+    )
+
+@app.route("/admin/statistics")
+def admin_statistics():
+    if session.get("role") != "admin":
+        flash("Unauthorized access", "danger")
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+
+    # Chart data
+    modules_labels = [m['name'] for m in conn.execute("SELECT * FROM modules").fetchall()]
+    modules_scores = []
+    for m in modules_labels:
+        avg = conn.execute("""
+            SELECT AVG(a.score*100.0/a.total_questions)
+            FROM attempts a
+            JOIN quizzes q ON a.quiz_id = q.id
+            JOIN modules m ON q.module_id = m.id
+            WHERE m.name=?
+        """, (m,)).fetchone()[0] or 0
+        modules_scores.append(round(avg,2))
+
+    quizzes_labels = [q['title'] for q in conn.execute("SELECT * FROM quizzes").fetchall()]
+    quizzes_attempts = [conn.execute("SELECT COUNT(*) FROM attempts WHERE quiz_id=?", (i+1,)).fetchone()[0] for i in range(len(quizzes_labels))]
+    quizzes_avg_scores = []
+    for i, q in enumerate(quizzes_labels):
+        avg = conn.execute("SELECT AVG(score*100.0/total_questions) FROM attempts a JOIN quizzes q ON a.quiz_id=q.id WHERE q.title=?", (q,)).fetchone()[0] or 0
+        quizzes_avg_scores.append(round(avg,2))
+
+    conn.close()
+
+    return render_template("admin_statistics.html",
+                           modules_labels=modules_labels,
+                           modules_scores=modules_scores,
+                           quizzes_labels=quizzes_labels,
+                           quizzes_attempts=quizzes_attempts,
+                           quizzes_avg_scores=quizzes_avg_scores)
 
 
 if __name__ == "__main__":

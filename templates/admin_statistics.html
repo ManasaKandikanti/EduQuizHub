@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block title %}Admin Statistics{% endblock %}
+
+{% block content %}
+<style>
+    body { 
+        background: linear-gradient(135deg,#667eea,#764ba2); 
+        min-height:100vh; 
+        color:#333; 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    }
+    h3 { 
+        color:#fff; 
+        font-weight:800; 
+        text-align:center; 
+        margin-bottom:40px; 
+        text-shadow:0 3px 6px rgba(0,0,0,0.3);
+    }
+    .charts-container { 
+        display:flex; 
+        flex-wrap:wrap; 
+        justify-content:center; 
+        gap:30px; 
+        margin-top:30px;
+    }
+    .chart-card { 
+        background:#fff; 
+        color:#333; 
+        border-radius:22px; 
+        padding:25px; 
+        box-shadow:0 20px 40px rgba(0,0,0,0.2); 
+        width:500px; 
+        margin-bottom:20px;
+    }
+    .chart-card h5 { 
+        margin-bottom:20px; 
+        text-align:center;
+    }
+    .btn-back {
+        margin: 20px auto 0 auto;
+        border-radius: 30px;
+        padding: 12px 28px;
+        font-weight: 600;
+        font-size: 16px;
+        text-decoration: none;
+        color: #fff;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        box-shadow: 0 10px 25px rgba(102,126,234,0.45);
+        transition: all 0.35s ease;
+        text-align: center;
+    }
+
+    .btn-back:hover {
+        transform: translateY(-2px) scale(1.05);
+        background: linear-gradient(135deg, #764ba2, #667eea);
+        box-shadow: 0 15px 30px rgba(118,75,162,0.6);
+        color: #fff;
+        text-decoration: none;
+    }
+</style>
+
+<!-- Button at the top -->
+<a href="{{ url_for('admin_info') }}" class="btn btn-back">Back to Admin Info</a>
+
+<h3>Admin Statistics & Performance</h3>
+
+<div class="charts-container">
+    <!-- Module Performance -->
+    <div class="chart-card">
+        <h5>Average Score per Module</h5>
+        <canvas id="moduleChart"></canvas>
+    </div>
+
+    <!-- Quiz Attempts -->
+    <div class="chart-card">
+        <h5>Quiz Attempts</h5>
+        <canvas id="quizChart"></canvas>
+    </div>
+
+    <!-- Average Quiz Scores -->
+    <div class="chart-card">
+        <h5>Average Scores per Quiz</h5>
+        <canvas id="scoreChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Ensure proper JS arrays
+    const modulesLabels = {{ modules_labels | tojson }};
+    const modulesScores = {{ modules_scores | tojson }};
+    const quizzesLabels = {{ quizzes_labels | tojson }};
+    const quizzesAttempts = {{ quizzes_attempts | tojson }};
+    const quizzesAvgScores = {{ quizzes_avg_scores | tojson }};
+
+    // Module Performance Chart
+    const moduleCtx = document.getElementById('moduleChart').getContext('2d');
+    new Chart(moduleCtx, {
+        type: 'bar',
+        data: {
+            labels: modulesLabels,
+            datasets: [{
+                label: 'Average Score (%)',
+                data: modulesScores,
+                backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                borderColor: 'rgba(102, 126, 234, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: { 
+            responsive:true, 
+            scales: { y: { beginAtZero:true, max:100 } } 
+        }
+    });
+
+    // Quiz Attempts Chart
+    const quizCtx = document.getElementById('quizChart').getContext('2d');
+    new Chart(quizCtx, {
+        type: 'pie',
+        data: {
+            labels: quizzesLabels,
+            datasets: [{
+                data: quizzesAttempts,
+                backgroundColor: [
+                    'rgba(102,126,234,0.7)',
+                    'rgba(118,75,162,0.7)',
+                    'rgba(0,198,255,0.7)',
+                    'rgba(255,159,64,0.7)',
+                    'rgba(255,99,132,0.7)'
+                ]
+            }]
+        },
+        options: { responsive:true }
+    });
+
+    // Average Scores Chart
+    const scoreCtx = document.getElementById('scoreChart').getContext('2d');
+    new Chart(scoreCtx, {
+        type: 'line',
+        data: {
+            labels: quizzesLabels,
+            datasets: [{
+                label: 'Average Score (%)',
+                data: quizzesAvgScores,
+                backgroundColor: 'rgba(102,126,234,0.2)',
+                borderColor:'rgba(102,126,234,1)',
+                fill:true,
+                tension:0.3
+            }]
+        },
+        options: { 
+            responsive:true, 
+            scales:{ y:{ beginAtZero:true, max:100 } } 
+        }
+    });
+</script>
+{% endblock %}

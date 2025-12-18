@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Students{% endblock %}
+
+{% block content %}
+<style>
+    body { 
+        background: linear-gradient(135deg,#667eea,#764ba2); 
+        min-height:100vh; 
+        color:#fff; 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    h3 { 
+        text-align:center; 
+        font-weight:800; 
+        margin-bottom:30px; 
+        text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .table-container {
+        max-width: 900px;
+        margin: 0 auto 40px auto;
+        background: #fff;
+        border-radius: 22px;
+        padding: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        color: #333;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+    }
+
+    th {
+        background: linear-gradient(135deg,#667eea,#764ba2);
+        color: #fff;
+        font-weight: 700;
+        border-radius: 8px;
+    }
+
+    tr:nth-child(even) {
+        background: #f4f4f4;
+    }
+
+    tr:hover {
+        background: #e0e7ff;
+        transform: scale(1.01);
+        transition: all 0.2s ease;
+    }
+
+    a.btn-back {
+        display: inline-block;
+        margin: 20px auto;
+        padding: 12px 28px;
+        border-radius: 30px;
+        font-weight: 600;
+        color: #fff;
+        text-decoration: none;
+        background: linear-gradient(135deg,#6c63ff,#4e54c8);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        transition: all 0.35s ease;
+    }
+
+    a.btn-back:hover {
+        background: linear-gradient(135deg,#4e54c8,#6c63ff);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 15px 35px rgba(78,84,200,0.5);
+        color: #fff;
+    }
+</style>
+
+<div class="text-center">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn-back">⬅ Back to Dashboard</a>
+</div>
+
+<h3>Students List</h3>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.name }}</td>
+                <td>{{ student.email }}</td>
+                <td>
+                    <a href="{{ url_for('admin_student_detail', student_id=student.id) }}" 
+                       style="color:#667eea; font-weight:600; text-decoration:none;">
+                       View Details
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Admin Info{% endblock %}
+
+{% block content %}
+<style>
+    body { 
+        background: linear-gradient(135deg,#667eea,#764ba2); 
+        min-height:100vh; 
+        color:#fff; 
+        text-align:center; 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin-bottom: 2rem;
+    }
+    h3 { color:#fff; font-weight:800; margin-bottom:40px; text-shadow:0 3px 6px rgba(0,0,0,0.3); }
+    .card { 
+        background:#fff; color:#333; border-radius:22px; padding:25px; 
+        box-shadow:0 20px 40px rgba(0,0,0,0.2); margin:15px; display:inline-block; width:280px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover { transform: translateY(-10px) scale(1.05); box-shadow: 0 30px 60px rgba(0,0,0,0.35);}
+    .card-icon { font-size:2.5rem; margin-bottom:10px; display:block; }
+    .card h5 { margin-bottom:10px; font-weight:700; }
+    .card p { font-size:1.2rem; font-weight:600; margin:0; }
+    .cards-container { display:flex; justify-content:center; flex-wrap:wrap; }
+    /* Common button styles */
+    .btn-stats {
+        display: inline-block;
+        margin: 20px 15px 0 15px;
+        border-radius: 30px;
+        padding: 12px 28px;
+        font-weight: 600;
+        font-size: 16px;
+        text-decoration: none;
+        color: #fff;
+        text-align: center;
+        transition: all 0.35s ease;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    }
+
+    /* Statistics button gradient */
+    .stats-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .stats-btn:hover {
+        transform: translateY(-3px) scale(1.05);
+        background: linear-gradient(135deg, #764ba2, #667eea);
+        box-shadow: 0 15px 35px rgba(118,75,162,0.5);
+        color: #fff;
+        text-decoration: none;
+    }
+
+    /* Dashboard button gradient */
+    .dashboard-btn {
+        background: linear-gradient(135deg, #6c63ff, #4e54c8);
+    }
+
+    .dashboard-btn:hover {
+        transform: translateY(-3px) scale(1.05);
+        background: linear-gradient(135deg, #4e54c8, #6c63ff);
+        box-shadow: 0 15px 35px rgba(78,84,200,0.5);
+        color: #fff;
+        text-decoration: none;
+    }
+</style>
+
+<h3>Admin Dashboard Info</h3>
+
+<div class="cards-container">
+    <div class="card">
+        <span class="card-icon">👤</span>
+        <h5>Name</h5>
+        <p>{{ admin.name }}</p>
+        <h5>Email</h5>
+        <p>{{ admin.email }}</p>
+    </div>
+
+    <div class="card">
+        <span class="card-icon">📚</span>
+        <h5>Total Modules</h5>
+        <p>{{ total_modules }}</p>
+    </div>
+
+    <div class="card">
+        <span class="card-icon">📝</span>
+        <h5>Total Quizzes</h5>
+        <p>{{ total_quizzes }}</p>
+    </div>
+
+    <div class="card">
+        <span class="card-icon">🎯</span>
+        <h5>Active Quizzes</h5>
+        <p>{{ total_active_quizzes }}</p>
+    </div>
+
+    <div class="card">
+        <span class="card-icon">👥</span>
+        <h5>Total Students</h5>
+        <p>{{ total_students }}</p>
+    </div>
+</div>
+
+<!-- Button to go to statistics page -->
+<a href="{{ url_for('admin_statistics') }}" class="btn btn-stats stats-btn">
+    View Detailed Statistics & Charts
+</a>
+
+<!-- Back to Dashboard -->
+<a href="{{ url_for('admin_dashboard') }}" class="btn btn-stats dashboard-btn">
+    Back to Dashboard
+</a>
+{% endblock %}

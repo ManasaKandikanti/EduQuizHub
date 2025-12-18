@@ -1,44 +1,111 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3 class="mb-4">Select Quiz</h3>
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        min-height: 100vh;
+        padding: 30px 0;
+    }
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Quiz Title</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for quiz in quizzes %}
-        <tr>
-            <td>{{ quiz.title }}</td>
-            <td>
+    h3 {
+        color: #fff;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 40px;
+        letter-spacing: 1px;
+        animation: fadeDown 0.8s ease-in-out;
+    }
 
-                {% if action == "add_questions" %}
-                    <a href="{{ url_for('add_questions', quiz_id=quiz.id) }}"
-                       class="btn btn-primary btn-sm">
-                       Add Questions
-                    </a>
+    h5 {
+        color: #fff;
+        font-weight: 700;
+        margin-bottom: 15px;
+        margin-left: 10px;
+    }
 
-                {% elif action == "publish_quiz" %}
-                    <a href="{{ url_for('publish_quiz', quiz_id=quiz.id) }}"
-                       class="btn btn-success btn-sm">
-                       Publish Quiz
-                    </a>
+    .quiz-card {
+        background: #ffffff;
+        border-radius: 22px;
+        padding: 20px 25px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.35s ease;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    }
 
-                {% elif action == "view_results" %}
-                <a href="{{ url_for('view_results', quiz_id=quiz.id) }}"
-   class="btn btn-info">
-   View Results
-</a>               
-                {% endif %}
+    .quiz-card:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 20px 35px rgba(0,0,0,0.25);
+    }
 
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+    .btn-sm {
+        border-radius: 20px;
+        font-weight: 600;
+        padding: 6px 16px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: #4e54c8;
+        transform: scale(1.05);
+    }
+
+    .btn-success:hover {
+        background: #5a9e5a;
+        transform: scale(1.05);
+    }
+
+    .btn-info:hover {
+        background: #17a2b8;
+        transform: scale(1.05);
+    }
+
+    .module-group {
+        margin-bottom: 30px;
+    }
+
+    @keyframes fadeDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<h3>Select Quiz</h3>
+
+{% set current_module = None %}
+{% for quiz in quizzes %}
+    {% if current_module != quiz.module_name %}
+        {% if not loop.first %}
+            </div> <!-- close previous module quizzes div -->
+        {% endif %}
+        <h5>{{ quiz.module_name }}</h5>
+        <div class="module-group">
+        {% set current_module = quiz.module_name %}
+    {% endif %}
+
+    <div class="quiz-card">
+        <span>{{ quiz.title }}</span>
+        {% if action == "add_questions" %}
+            <a href="{{ url_for('add_questions', quiz_id=quiz.id) }}" class="btn btn-primary btn-sm">
+                Add Questions
+            </a>
+        {% elif action == "publish_quiz" %}
+            <a href="{{ url_for('publish_quiz', quiz_id=quiz.id) }}" class="btn btn-success btn-sm">
+                Publish Quiz
+            </a>
+        {% elif action == "view_results" %}
+            <a href="{{ url_for('view_results', quiz_id=quiz.id) }}" class="btn btn-info btn-sm">
+                View Results
+            </a>
+        {% endif %}
+    </div>
+
+    {% if loop.last %}
+        </div> <!-- close last module quizzes div -->
+    {% endif %}
+{% endfor %}
 
 {% endblock %}
