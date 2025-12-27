@@ -11,15 +11,20 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
     <style>
-        body {
-            background: #f4f6fb;
+        html, body {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
             font-family: "Segoe UI", sans-serif;
+            background: #f4f6fb;
         }
 
-        /* Navbar */
+        /* ================= NAVBAR ================= */
         .navbar {
             background: linear-gradient(135deg, #667eea, #764ba2);
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            height: 70px;
         }
 
         .navbar-brand {
@@ -31,9 +36,8 @@
 
         .nav-link {
             font-weight: 500;
-            margin-left: 10px;
+            margin-left: 14px;
             position: relative;
-            cursor: pointer;
             transition: all 0.3s ease;
         }
 
@@ -56,48 +60,43 @@
             transform: translateY(-2px);
         }
 
-        /* Flash messages */
+        /* ================= FLASH MESSAGES ================= */
         .alert {
             border-radius: 14px;
-            animation: slideDown 0.6s ease;
+            animation: slideDown 0.5s ease;
         }
 
-        /* Content wrapper */
+        /* ================= PAGE CONTAINER ================= */
         .page-container {
-            margin-top: 80px; /* Enough space for fixed navbar */
-            animation: fadeIn 0.8s ease;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            animation: fadeIn 0.6s ease;
         }
 
-        /* Animations */
+        /* ================= ANIMATIONS ================= */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
+            from { opacity: 0; transform: translateY(-15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes glow {
             from { text-shadow: 0 0 5px #fff; }
-            to { text-shadow: 0 0 15px #fff; }
-        }
-
-        /* Optional: Adjust body padding for very small screens */
-        @media (max-width: 576px) {
-            .page-container {
-                margin-top: 100px;
-            }
+            to { text-shadow: 0 0 14px #fff; }
         }
     </style>
 </head>
 
 <body>
 
-<!-- Navbar (fixed-top) -->
+<!-- ================= NAVBAR ================= -->
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-    <div class="container">
+    <div class="container-fluid px-4">
         <a class="navbar-brand" href="{{ url_for('home') }}">🎓 EduQuizHub</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -124,8 +123,8 @@
     </div>
 </nav>
 
-<!-- Flash messages -->
-<div class="container mt-5 pt-2">  <!-- Adjusted top margin -->
+<!-- ================= FLASH MESSAGES ================= -->
+<div class="container-fluid px-4 mt-2">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
@@ -138,9 +137,8 @@
     {% endwith %}
 </div>
 
-
-<!-- Page Content -->
-<div class="container page-container">
+<!-- ================= PAGE CONTENT ================= -->
+<div class="page-container">
     {% block content %}{% endblock %}
 </div>
 

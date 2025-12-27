@@ -25,7 +25,6 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative;
 }
 
 .glass-card {
@@ -72,7 +71,6 @@ h2, h3 { font-weight: 900; letter-spacing: 1px; margin-bottom: 20px; }
     box-shadow: 0 15px 35px rgba(0,0,0,0.4);
 }
 
-/* Chart container styling */
 .chart-row {
     display: flex;
     flex-wrap: wrap;
@@ -96,7 +94,6 @@ canvas {
     padding: 10px;
 }
 
-/* User profile button/icon next to welcome message */
 .user-profile-btn {
     background: rgba(255,255,255,0.25);
     backdrop-filter: blur(10px);
@@ -112,10 +109,11 @@ canvas {
 }
 
 .user-profile-btn img {
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     margin-right: 10px;
+    object-fit: cover;
 }
 
 .user-profile-btn:hover {
@@ -126,9 +124,15 @@ canvas {
 <div class="dashboard-wrapper">
     <!-- Welcome Card with Profile Button -->
     <div class="glass-card">
-        <h2 class="text-white">Welcome, {{ student_name }}!</h2>
+        <h2 class="text-white">Welcome, {{ student.name }}!</h2>
         <a href="{{ url_for('student_profile') }}" class="user-profile-btn">
-            <img src="{{ url_for('static', filename='user-icon.png') }}" alt="Profile Icon">
+            {% if student.profile_image %}
+                <img src="{{ url_for('static', filename='uploads/' + student.profile_image) }}" alt="Profile Image">
+            {% else %}
+                <div style="width:40px; height:40px; border-radius:50%; background:#6f42c1; display:flex; align-items:center; justify-content:center; font-weight:700;">
+                    {{ student.name[0] }}
+                </div>
+            {% endif %}
             My Profile
         </a>              
     </div>
@@ -159,7 +163,6 @@ const modules = {{ module_labels|tojson }};
 const scores = {{ module_scores|tojson }};
 const totals = {{ module_totals|tojson }};
 
-// Bar chart for module performance
 new Chart(document.getElementById('moduleChart'), {
     type: 'bar',
     data: {
@@ -176,7 +179,6 @@ new Chart(document.getElementById('moduleChart'), {
     options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
 });
 
-// Doughnut chart for total quizzes attempted
 new Chart(document.getElementById('totalChart'), {
     type: 'doughnut',
     data: {

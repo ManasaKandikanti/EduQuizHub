@@ -3,7 +3,6 @@
 
 {% block content %}
 <style>
-/* Background animation (same as dashboard) */
 body {
     background: linear-gradient(-45deg, #4e73df, #1cc88a, #6f42c1, #36b9cc);
     background-size: 400% 400%;
@@ -19,7 +18,6 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* Profile card wrapper */
 .profile-wrapper {
     max-width: 900px;
     margin: 80px auto;
@@ -33,19 +31,17 @@ body {
     animation: fadeUp 1s ease;
 }
 
-/* Fade-up animation */
 @keyframes fadeUp {
     from { opacity: 0; transform: translateY(50px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Avatar circle */
 .profile-avatar {
     width: 130px;
     height: 130px;
     border-radius: 50%;
     margin: 0 auto 20px;
-    background: linear-gradient(135deg, #6f42c1, #4e73df);
+    background: #6f42c1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -53,9 +49,15 @@ body {
     font-weight: 700;
     color: #fff;
     box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    overflow: hidden;
 }
 
-/* Buttons */
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .btn-edit, .btn-back {
     border-radius: 50px;
     padding: 12px 30px;
@@ -74,7 +76,6 @@ body {
 .btn-back { background: linear-gradient(135deg, #4e73df, #6f42c1); }
 .btn-back:hover { transform: scale(1.05); box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
 
-/* Chart card */
 .chart-card {
     background: #ffffff;
     border-radius: 18px;
@@ -84,7 +85,6 @@ body {
     box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 
-/* Responsive text */
 h2 { font-weight: 900; letter-spacing: 1px; margin-bottom: 10px; font-size: 2rem; }
 h3 { font-weight: 700; margin-bottom: 15px; }
 p { font-size: 1.1rem; }
@@ -92,7 +92,11 @@ p { font-size: 1.1rem; }
 
 <div class="profile-wrapper">
     <div class="profile-avatar">
-        {{ student.name[0] }}
+        {% if student.profile_image %}
+            <img src="{{ url_for('static', filename='uploads/' + student.profile_image) }}" alt="Profile Image">
+        {% else %}
+            {{ student.name[0] }}
+        {% endif %}
     </div>
 
     <h2>{{ student.name }}</h2>
@@ -130,9 +134,7 @@ new Chart(document.getElementById('performanceChart'), {
     options: {
         responsive: true,
         scales: { y: { beginAtZero: true, max: 100 } },
-        plugins: {
-            legend: { display: false }
-        }
+        plugins: { legend: { display: false } }
     }
 });
 </script>

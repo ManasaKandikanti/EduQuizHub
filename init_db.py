@@ -3,14 +3,17 @@ import sqlite3
 conn = sqlite3.connect("database.db")
 c = conn.cursor()
 
-# Users table
+# Users table with profile_image column
 c.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    role TEXT NOT NULL
+    role TEXT NOT NULL,
+    email_verified INTEGER DEFAULT 1,
+    email_otp TEXT,
+    profile_image TEXT
 )
 """)
 
@@ -65,4 +68,4 @@ CREATE TABLE IF NOT EXISTS attempts (
 
 conn.commit()
 conn.close()
-print("Database initialized successfully with answers column in attempts table!")
+print("Database initialized successfully with profile_image column!")

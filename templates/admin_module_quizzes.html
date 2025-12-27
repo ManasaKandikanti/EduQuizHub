@@ -3,13 +3,10 @@
 
 {% block content %}
 <style>
-    /* Page background */
     body {
         background: linear-gradient(135deg, #667eea, #764ba2);
         min-height: 100vh;
     }
-
-    /* Page header */
     .page-header {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: #fff;
@@ -18,16 +15,12 @@
         box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         animation: fadeDown 0.8s ease;
     }
-
-    /* Buttons */
     .btn-animated {
         border-radius: 30px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.35s ease;
     }
-
-    /* ADD QUIZ BUTTON */
     .btn-add-quiz {
         background: linear-gradient(135deg, #00c6ff, #0072ff);
         color: #fff;
@@ -37,15 +30,12 @@
         letter-spacing: 0.6px;
         box-shadow: 0 12px 25px rgba(0,114,255,0.45);
     }
-
     .btn-add-quiz:hover {
         background: linear-gradient(135deg, #0072ff, #00c6ff);
         transform: translateY(-3px) scale(1.08);
         box-shadow: 0 18px 35px rgba(0,114,255,0.6);
         color: #fff;
     }
-
-    /* TABLE CARD */
     .table-card {
         border-radius: 22px;
         background: #ffffff;
@@ -53,34 +43,26 @@
         box-shadow: 0 20px 40px rgba(0,0,0,0.15);
         animation: fadeUp 0.8s ease;
     }
-
-    /* Table hover */
     .table-hover tbody tr {
         transition: background 0.3s ease, transform 0.3s ease;
         cursor: pointer;
     }
-
     .table-hover tbody tr:hover {
         background: #eef2ff;
         transform: scale(1.01);
     }
-
-    /* Status badges */
     .badge-active {
         background: linear-gradient(135deg, #28a745, #20c997);
         padding: 6px 14px;
         border-radius: 20px;
         font-size: 12px;
     }
-
     .badge-draft {
         background: linear-gradient(135deg, #6c757d, #adb5bd);
         padding: 6px 14px;
         border-radius: 20px;
         font-size: 12px;
     }
-
-    /* Action buttons */
     .btn-add-questions {
         background: linear-gradient(135deg, #ffc107, #ff9800);
         color: #fff;
@@ -91,13 +73,11 @@
         box-shadow: 0 6px 15px rgba(255,193,7,0.5);
         transition: all 0.3s ease;
     }
-
     .btn-add-questions:hover {
         transform: scale(1.12);
         box-shadow: 0 10px 22px rgba(255,193,7,0.7);
         color: #fff;
     }
-
     .btn-publish {
         background: linear-gradient(135deg, #28a745, #20c997);
         color: #fff;
@@ -108,33 +88,39 @@
         box-shadow: 0 6px 15px rgba(40,167,69,0.5);
         transition: all 0.3s ease;
     }
-
     .btn-publish:hover {
         transform: scale(1.12);
         box-shadow: 0 10px 22px rgba(40,167,69,0.7);
         color: #fff;
     }
-
-    /* Animations */
+    .btn-info {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: #fff;
+        border: none;
+        padding: 7px 16px;
+        border-radius: 30px;
+        font-size: 12px;
+        box-shadow: 0 6px 15px rgba(23,162,184,0.5);
+        transition: all 0.3s ease;
+    }
+    .btn-info:hover {
+        transform: scale(1.12);
+        box-shadow: 0 10px 22px rgba(23,162,184,0.7);
+        color: #fff;
+    }
     @keyframes fadeDown {
         from { opacity: 0; transform: translateY(-30px); }
         to { opacity: 1; transform: translateY(0); }
     }
-
     @keyframes fadeUp {
         from { opacity: 0; transform: translateY(30px); }
         to { opacity: 1; transform: translateY(0); }
     }
 </style>
 
-<!-- Header -->
 <div class="page-header mb-4 d-flex justify-content-between align-items-center">
     <h3 class="fw-bold mb-0 text-white">📝 Manage Quizzes</h3>
-
-    <a href="{{ url_for('manage_modules') }}"
-       class="btn btn-light btn-animated">
-        ⬅ Back to Modules
-    </a>
+    <a href="{{ url_for('manage_modules') }}" class="btn btn-light btn-animated">⬅ Back to Modules</a>
 </div>
 
 <div class="mb-3 text-center">
@@ -143,16 +129,12 @@
     </span>
 </div>
 
-
-<!-- Add Quiz Button -->
 <div class="mb-4">
-    <a href="{{ url_for('add_quiz', module_id=module.id) }}"
-       class="btn btn-add-quiz btn-animated">
+    <a href="{{ url_for('add_quiz', module_id=module.id) }}" class="btn btn-add-quiz btn-animated">
         ➕ Add Quiz
     </a>
 </div>
 
-<!-- Quizzes Table -->
 <div class="card table-card">
     <div class="card-body p-0">
         <table class="table table-hover align-middle mb-0">
@@ -175,14 +157,16 @@
                         {% endif %}
                     </td>
                     <td class="text-center">
-                        <a href="{{ url_for('add_questions', quiz_id=q.id) }}"
-                           class="btn btn-add-questions">
+                        <a href="{{ url_for('add_questions', quiz_id=q.id) }}" class="btn btn-add-questions">
                             ❓ Add Questions
                         </a>
 
+                        <a href="{{ url_for('view_quiz_questions', quiz_id=q.id) }}" class="btn btn-info ms-2">
+                            👁 View Questions
+                        </a>
+
                         {% if not q.is_active %}
-                        <a href="{{ url_for('publish_quiz', quiz_id=q.id) }}"
-                           class="btn btn-publish ms-2">
+                        <a href="{{ url_for('publish_quiz', quiz_id=q.id) }}" class="btn btn-publish ms-2">
                             🚀 Publish
                         </a>
                         {% endif %}

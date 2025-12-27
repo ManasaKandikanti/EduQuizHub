@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash
-from db import get_db
+from db.db import get_db
 
 conn = get_db()
 

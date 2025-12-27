@@ -18,7 +18,7 @@
     }
 
     .table-container {
-        max-width: 900px;
+        max-width: 950px;
         margin: 0 auto 40px auto;
         background: #fff;
         border-radius: 22px;
@@ -35,6 +35,7 @@
     th, td {
         padding: 12px 15px;
         text-align: left;
+        vertical-align: middle;
     }
 
     th {
@@ -73,6 +74,73 @@
         box-shadow: 0 15px 35px rgba(78,84,200,0.5);
         color: #fff;
     }
+
+    /* View Details Button */
+    .btn-view {
+        display: inline-block;
+        padding: 8px 18px;
+        margin-right: 10px;
+        border-radius: 25px;
+        font-weight: 600;
+        color: #fff;
+        text-decoration: none;
+        background: linear-gradient(135deg,#667eea,#764ba2);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+
+    .btn-view:hover {
+        background: linear-gradient(135deg,#764ba2,#667eea);
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+    }
+
+    /* Delete Button */
+    .btn-delete {
+        padding: 8px 18px;
+        border-radius: 25px;
+        font-weight: 600;
+        color: #fff;
+        border: none;
+        background: linear-gradient(135deg,#ff4d4f,#ff7875);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-delete:hover {
+        background: linear-gradient(135deg,#ff7875,#ff4d4f);
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+    }
+
+    /* Profile image */
+    .profile-img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+
+    .profile-img {
+    width: 50px;                /* slightly larger */
+    height: 50px;
+    border-radius: 50%;         /* keeps it circular */
+    object-fit: cover;          /* crops image nicely */
+    border: 2px solid #667eea;  /* subtle border matching theme */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* soft shadow */
+    transition: all 0.3s ease;
+    vertical-align: middle;
+}
+
+.profile-img:hover {
+    transform: scale(1.1);      /* zoom effect on hover */
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3); /* stronger shadow */
+    border-color: #764ba2;      /* gradient accent on hover */
+}
+
 </style>
 
 <div class="text-center">
@@ -85,6 +153,7 @@
     <table>
         <thead>
             <tr>
+                <th>Profile</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Action</th>
@@ -93,17 +162,34 @@
         <tbody>
             {% for student in students %}
             <tr>
+                <!-- Profile Image -->
+                <td>
+                    {% if student.profile_image %}
+                        <img src="{{ url_for('static', filename='uploads/' + student.profile_image) }}" 
+                             alt="Profile Image" class="profile-img">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='uploads/default.png') }}" 
+                             alt="Default Profile" class="profile-img">
+                    {% endif %}
+                </td>                               
+        
                 <td>{{ student.name }}</td>
                 <td>{{ student.email }}</td>
                 <td>
-                    <a href="{{ url_for('admin_student_detail', student_id=student.id) }}" 
-                       style="color:#667eea; font-weight:600; text-decoration:none;">
-                       View Details
+                    <a href="{{ url_for('admin_student_detail', student_id=student.id) }}" class="btn-view">
+                        View Details
                     </a>
-                </td>
+        
+                    <form action="{{ url_for('delete_student', student_id=student.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn-delete" 
+                                onclick="return confirm('Are you sure you want to delete this student and all their quiz attempts?');">
+                            Delete
+                        </button>
+                    </form>
+                </td>                
             </tr>
             {% endfor %}
-        </tbody>
+        </tbody>        
     </table>
 </div>
 {% endblock %}
