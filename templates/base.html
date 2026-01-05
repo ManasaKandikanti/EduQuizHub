@@ -70,8 +70,9 @@
         .page-container {
             width: 100%;
             margin: 0;
-            padding: 0;
+            padding: 120px 20px 20px 20px; /* top padding to avoid navbar & flash overlap */
             animation: fadeIn 0.6s ease;
+            min-height: calc(100vh - 70px);
         }
 
         /* ================= ANIMATIONS ================= */
@@ -123,8 +124,10 @@
     </div>
 </nav>
 
-<!-- ================= FLASH MESSAGES ================= -->
-<div class="container-fluid px-4 mt-2">
+<!-- ================= PAGE CONTENT & FLASH MESSAGES ================= -->
+<div class="page-container">
+
+    <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
@@ -135,10 +138,8 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-</div>
 
-<!-- ================= PAGE CONTENT ================= -->
-<div class="page-container">
+    <!-- Main Page Content -->
     {% block content %}{% endblock %}
 </div>
 

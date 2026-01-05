@@ -4,22 +4,31 @@
 {% block content %}
 
 <style>
+/* ===== RESET ===== */
 html, body {
     width: 100%;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    font-family: 'Poppins', sans-serif;
 }
 
-/* ===== GLOBAL ===== */
-section {
-    width: 100vw;
-}
-
+/* ===== INNER WRAPPER ===== */
 .inner {
     max-width: 1400px;
-    margin: auto;
-    padding: 0 30px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* ================= NAVBAR ================= */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    margin: 0;
+    padding: 0;
 }
 
 /* ================= HERO ================= */
@@ -33,6 +42,7 @@ section {
     background: linear-gradient(-45deg,#4e73df,#1cc88a,#6f42c1,#36b9cc);
     background-size: 400% 400%;
     animation: gradientMove 12s ease infinite;
+    margin: 0;
 }
 
 @keyframes gradientMove {
@@ -77,6 +87,7 @@ section {
 /* ================= STATS ================= */
 .stats {
     background: #ffffff;
+    padding: 60px 0;
 }
 
 .stat-card {
@@ -100,6 +111,7 @@ section {
 /* ================= FEATURES ================= */
 .features {
     background: #f4f6fb;
+    padding: 60px 0;
 }
 
 .feature-card {
@@ -117,6 +129,7 @@ section {
 /* ================= HOW IT WORKS ================= */
 .steps {
     background: #ffffff;
+    padding: 60px 0;
 }
 
 .step {
@@ -131,6 +144,7 @@ section {
 /* ================= TESTIMONIALS ================= */
 .testimonials {
     background: #f9fafb;
+    padding: 60px 0;
 }
 
 .testimonial {
@@ -143,13 +157,36 @@ section {
 /* ================= FAQ ================= */
 .faq {
     background: #ffffff;
+    padding: 60px 0;
 }
 
 .faq-item {
     background: #f4f6fb;
-    padding: 25px;
+    padding: 20px 25px;
     border-radius: 18px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.faq-item strong {
+    display: block;
+}
+
+.faq-item p {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    margin: 0;
+}
+
+.faq-item.active {
+    background: #e2e8f0;
+}
+
+.faq-item.active p {
+    max-height: 500px;
+    margin-top: 10px;
 }
 
 /* ================= CTA ================= */
@@ -157,6 +194,7 @@ section {
     background: linear-gradient(135deg,#111827,#1f2937);
     color: #fff;
     text-align: center;
+    padding: 60px 20px;
 }
 
 .cta-btn {
@@ -175,7 +213,7 @@ section {
 
 /* ================= FOOTER ================= */
 .footer {
-    width: 100vw;
+    width: 100%;
     background: #0f172a;
     color: #9ca3af;
     text-align: center;
@@ -193,6 +231,91 @@ section {
         font-size: 2.6rem;
     }
 }
+
+/* ===== BUTTON STYLING ===== */
+.hero-btn {
+    padding: 14px 50px;
+    border-radius: 50px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.4s ease;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-btn::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255,255,255,0.3);
+    transition: all 0.4s ease;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.hero-btn:hover::after {
+    width: 300%;
+    height: 300%;
+}
+
+.btn-login {
+    background: linear-gradient(135deg,#4e73df,#36b9cc);
+    color: #fff;
+}
+
+.btn-register {
+    background: linear-gradient(135deg,#1cc88a,#22c55e);
+    color: #fff;
+}
+
+.hero-btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+}
+
+/* CTA BUTTON */
+.cta-btn {
+    padding: 16px 55px;
+    border-radius: 50px;
+    font-weight: 700;
+    background: linear-gradient(135deg,#4e73df,#6f42c1);
+    color: #fff;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.4s ease;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-btn::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255,255,255,0.2);
+    transition: all 0.4s ease;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.cta-btn:hover::after {
+    width: 300%;
+    height: 300%;
+}
+
+.cta-btn:hover {
+    transform: translateY(-6px) scale(1.08);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+}
+
 </style>
 
 <!-- ================= HERO ================= -->
@@ -200,7 +323,6 @@ section {
     <div class="inner">
         <h1>EduQuizHub 🎓</h1>
         <p>Learn smarter • Quiz better • Analyze faster</p>
-
         <div class="d-flex justify-content-center gap-4">
             <a href="{{ url_for('login') }}" class="hero-btn btn-login">Login</a>
             <a href="{{ url_for('register') }}" class="hero-btn btn-register">Get Started</a>
@@ -337,5 +459,14 @@ section {
 <footer class="footer">
     <p>© 2025 EduQuizHub. All rights reserved.</p>
 </footer>
+
+<script>
+// FAQ Accordion
+document.querySelectorAll('.faq-item').forEach(item => {
+    item.addEventListener('click', () => {
+        item.classList.toggle('active');
+    });
+});
+</script>
 
 {% endblock %}
